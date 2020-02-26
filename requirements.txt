@@ -1,0 +1,4 @@
+wget>=3.2
+pyyaml>=5.1.2
+bs4>=0.0.1
+pycryptodome>=3.9.7

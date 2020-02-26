@@ -1,0 +1,2 @@
+class OnePasswordForgottenPassword(Exception):
+    pass
