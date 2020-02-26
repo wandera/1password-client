@@ -22,7 +22,7 @@ setup(
     ],
     python_requires='>=3.7',
     license="MIT",
-    url="https://github.com/wandera/1password",
+    url="https://github.com/dtpryce/1password",
     classifiers=["Programming Language :: Python :: 3",
                  "License :: OSI Approved :: MIT License",
                  "Operating System :: MacOS :: MacOS", ],

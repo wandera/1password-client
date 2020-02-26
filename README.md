@@ -11,14 +11,14 @@ pip install 1password
 
 
 ## Basic Usage
-Currently fully tested on MacOSX
+Currently fully tested on Mac OS.
 
 On first usage users will be asked for both the enrolled email, secret key and master 
-password.
+password. Mac OS users will also be prompted with installation windows to ensure you have the latest version of `op`.
 
-For all following usages you will only be asked for master passwords.
+For all following usages you will only be asked for a master password.
 
-You will be given 3 attempts and then pointed to reset password documentation or 
+You will be given 3 attempts and then pointed to reset password documentation or alternatively you can
 restart your kernel.
 
 No passwords are stored in memory without encryption.
@@ -42,3 +42,5 @@ op.get_items()
 - Fix and test Linux implementation
 - Add UTs
 - Add test docker image
+- Align response types into JSON / lists instead of JSON strings
+- Ensure full functionality of CLI in python
