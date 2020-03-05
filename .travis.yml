@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.7"
+
+install: pip install -r requirements.txt  # Install requirements
+#script: pytest  # Run pytest tests
+
+deploy:
+  provider: pypi
+  user: dtprycewandera
+  password:
+    secure: YRABjVLMKaBU77wDh0+b1Uh9DjkjFr+M4s5Gsy+/8+uJOR5lXVT4hzGPFmvNYdrA6VsEhgw9ueUeTnQP49dabDTmMP5j6hGgzYpilZTzwH7loP89T813fyXKat8uMjERRakp11sThQTlo5jfdBlIk3zTXn6s6sruJDXaOi0dk5GBS5M5SScc3YJ0ZtDERvoTVDtsof6AeP+Bmrd0mMx35OoHa3TalUmbcUsK3enzhEO00WkbT3cU4gN/zJNt4+rwdkXorWqix5EyKp9YhQ+ljAZG4WiBle2JwS49joYuyuLctRzmYIPm8s8uDVG1dw+oEaROLUv4Eh9hyUeGPkqvQ1DgBv24e2w9oVxYVGscaI6KTP4c6qPKAQ/U8T1mn3kTbX8f50Di1Q31lq0ZqqT+reGJHUF/64ULqyzPGYw3lWZvxtHmUfNG9di5L2sDHcQsKvKlIw0rj7lYFkyThpSMbndw2XoX4EpcZe9ZrwaQsQLU73SYFfMphK6/5ywhaHnRN/nO7ek+zY69lq1IBPD+I1xvoabNz7HsTKlaPgG5TpRRMXZnYaZGeD9RCcGRyyVrsh0/YL2wS9Z752fVpRjU/Gvo9bfrAICFaNo4lfoB3q9RgMptNzEyLIuz/ea8JDJGSbRma0Ni2hGQp3+uxbQakGV7z7ARaSuh2x8GUYK7kig=
+  distributions: sdist bdist_wheel
+  on:
+    branch: master
