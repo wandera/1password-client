@@ -3,6 +3,7 @@ python:
 - '3.7.6'
 
 before_install: pip install --upgrade pip
+script: pytest # no tests yet 
 #deploy:
 #  provider: pypi
 #  user: dtprycewandera
