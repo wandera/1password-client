@@ -12,7 +12,7 @@ deploy:
   on:
     branch: master
   after_success:
-    - rm -rf __pycache__
+    - rm -rf onepassword/__pycache__
     - rm -rf 1password.egg-info
     - rm -rf dist
     - rm -rf build
