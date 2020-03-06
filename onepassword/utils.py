@@ -3,6 +3,7 @@ import base64
 from bs4 import BeautifulSoup
 from Crypto.Cipher import AES
 from urllib.request import urlopen, Request
+from .version import VERSION
 
 
 def read_bash_return(cmd, single=True):
@@ -171,3 +172,13 @@ class Encryption:
 
     def encode(self, input_str):
         return base64.b64encode(self.cipher.encrypt(input_str.rjust(32)))
+
+
+def bump_version():
+    all_version = VERSION.split(".")
+    new_all_version = VERSION.split(".")[:-1]
+    new_all_version.append(str(int(all_version[-1]) + 1))
+    new_line = "VERSION = "+ '"{}"'.format(".".join(new_all_version)) + "\n"
+    with open("onepassword/version.py", "w") as fp:
+        fp.write(new_line)
+    fp.close()
