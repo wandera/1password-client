@@ -20,6 +20,7 @@ after_deploy:
   - git add -u
   - git commit -m "[skip travis] Bumping version"
   - git push origin master
+  - git fetch --all
   - git checkout develop
   - git merge master
   - git add -u
