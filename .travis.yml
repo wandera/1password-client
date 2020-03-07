@@ -1,11 +1,14 @@
 language: python
+
 python:
 - '3.7.6'
 
 before_install:
   - pip install --upgrade pip
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
+
 script: pytest
+
 deploy:
   provider: pypi
   user: dtprycewandera
@@ -13,16 +16,11 @@ deploy:
     secure: JHFShd8I2MWZRLTkjOksK6bUdkdi2+FYKPO1ZmzrycsWfzD2vTYnqYylqsFHagRv7KkyWhUnRttm94xx7C6cWMRPytlCOaYXGR0TB7QO5ajif5PjnVre0O8dWzdIuBofrxB2otZ3K8RpUgcj27frxFCqQxvBtKPsNLwN0UTXD2mGRevHdcCvZVfHdXw0cbW9umeLNJmnlzVug6O3xDY8BF0cdVOhciHElcGij1YSOfZLwz0Ru5AfiFkf/3DdqDq8IiWysKViUgbuW4Tre51sI8KIGhB5Nle2QWKWOdyFGvQk2UXWGjXwmybzwStFAvpMbyJV0RsCAUFYJrH1LQbn9s1ZZ+W8KqJwGjnkCpeinz12a/61JKhV/Igz+ZSTVlkKW8/Y0skQ/U7BjnO/PWbjCw15vJ8TCtgrOFpw+yxyFqogTOWlPfwL7ox5gbC/AHRMzSDkWEl2aYRCnPsWpavjvuKRnSWKKbmv8fiIBZ5et6a3ftw1uAO3O2OwRmnobAhDglRChHbbxtjq94Nns9YeCaN+t+uMqM7oWaDfsiM0CEC0thXdzGDqvv4KJWA0IetSg7afX9DYzy3YntEmCZFhIRGgGhhk1DtYNT75+cnwde0nzNO2bmpgKYn6c4OpjUNxz86ijlReDzSJiCDtJWtKxLRnuu3E8PyxuAOFZs4x8nk=
   on:
     branch: master
+
 after_deploy:
-  - git checkout -b temp
-  - git checkout -B master temp
-  - python -c "from onepassword.utils import bump_version; bump_version()"
-  - git add -u
-  - git commit -m "[skip travis] Bumping version"
-  - git push origin master
   - git checkout -b develop
   - git merge master
+  - python -c "from onepassword.utils import bump_version; bump_version()"
   - git add -u
-  - git commit -m "[skip travis] Merging master into develop"
+  - git commit -m "[skip travis] Bumping version on develop"
   - git push -u origin develop
-

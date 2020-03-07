@@ -39,6 +39,15 @@ op.get_items()
 ```
 
 
+## Contributing 
+The travis build will run with any PR or commit to master branch and then updates 
+the develop branch with a new version for contributors to branch from.
+
+This means when contributing you should create a feature branch off of the develop branch and without 
+manually bumping the version can focus on development. Merge back into develop.
+
+Later main contributors / authors will generate a release branch to merge into master.
+
 
 ## Roadmap
 - Fix and test Linux implementation
