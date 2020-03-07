@@ -2,7 +2,9 @@ language: python
 python:
 - '3.7.6'
 
-before_install: pip install --upgrade pip
+before_install:
+  - pip install --upgrade pip
+  - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
 script: pytest
 deploy:
   provider: pypi
