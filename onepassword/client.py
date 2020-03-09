@@ -8,8 +8,8 @@ import platform
 from getpass import getpass
 from subprocess import Popen, PIPE, STDOUT
 from json import JSONDecodeError
-from .utils import read_bash_return, scrape, domain_from_email, Encryption, BashProfile
-from .exceptions import OnePasswordForgottenPassword
+from onepassword.utils import read_bash_return, scrape, domain_from_email, Encryption, BashProfile
+from onepassword.exceptions import OnePasswordForgottenPassword
 
 
 class OnePassword:

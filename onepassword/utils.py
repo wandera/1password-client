@@ -3,7 +3,6 @@ import base64
 from bs4 import BeautifulSoup
 from Crypto.Cipher import AES
 from urllib.request import urlopen, Request
-from .version import VERSION
 
 
 def read_bash_return(cmd, single=True):
@@ -175,10 +174,19 @@ class Encryption:
 
 
 def bump_version():
-    all_version = VERSION.split(".")
-    new_all_version = VERSION.split(".")[:-1]
+    """
+    Only run in the project root directory, this is for travis to bump the version file only!
+
+    :return:
+    """
+    __root__ = os.path.abspath("")
+    with open(os.path.join(__root__, 'VERSION')) as version_file:
+        version = version_file.read().strip()
+
+    all_version = version.replace('"', "").split(".")
+    new_all_version = version.split(".")[:-1]
     new_all_version.append(str(int(all_version[-1]) + 1))
-    new_line = "VERSION = "+ '"{}"'.format(".".join(new_all_version)) + "\n"
-    with open("onepassword/version.py", "w") as fp:
+    new_line = '.'.join(new_all_version) + "\n"
+    with open("{}/VERSION".format(__root__), "w") as fp:
         fp.write(new_line)
     fp.close()
