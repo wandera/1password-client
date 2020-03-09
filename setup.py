@@ -1,5 +1,10 @@
 from setuptools import setup
-from onepassword.version import VERSION
+import os
+
+
+root_dir = os.getcwd()
+with open(os.path.join(root_dir, 'VERSION')) as version_file:
+    version = version_file.read().strip()
 
 
 def readme():
@@ -9,7 +14,7 @@ def readme():
 
 setup(
     name="1password",
-    version=VERSION,
+    version=version,
     author="David Pryce",
     author_email="david.pryce@wandera.com",
     description="A Python client and wrapper around the 1Password CLI.",
@@ -26,7 +31,7 @@ setup(
     url="https://github.com/wandera/1password-client",
     classifiers=["Programming Language :: Python :: 3",
                  "License :: OSI Approved :: MIT License",
-                 "Operating System :: MacOS :: MacOS X" ],
+                 "Operating System :: MacOS :: MacOS X"],
     packages=["onepassword"],
     tests_require=["nose", "mock"],
     test_suite="nose.collector",
