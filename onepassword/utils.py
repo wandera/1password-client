@@ -17,7 +17,7 @@ def read_bash_return(cmd, single=True):
 
 def docker_check():
     f = None
-    user_home = os.eviron.get('HOME')
+    user_home = os.environ.get('HOME')
     for rcfile in ['.bashrc', '.zshrc']:
         rcpath = os.path.join(user_home, rcfile)
         if os.path.exists(rcpath):
