@@ -18,13 +18,13 @@ def read_bash_return(cmd, single=True):
 def docker_check():
     f = None
     user_home = os.environ.get('HOME')
-    for rcfile in ['.bashrc', '.zshrc']:
+    for rcfile in ['.bashrc', '.bash_profile', '.zshrc', '.zprofile']:
         rcpath = os.path.join(user_home, rcfile)
         if os.path.exists(rcpath):
             f = open(os.path.join(user_home, rcpath), "r")
             break
     if not f:
-        raise Exception("No rc files (.bashrc/.zshrc) exist.")
+        raise Exception("No sehll rc or profile files exist.")
     bash_profile = f.read()
     try:
         docker_flag = bash_profile.split('DOCKER_FLAG="')[1][0]
@@ -86,13 +86,13 @@ class BashProfile:
     def __init__(self):
         f = None
         user_home = os.environ.get('HOME')
-        for rcfile in ['.bashrc', '.zshrc']:
+        for rcfile in ['.bashrc', '.bash_profile', '.zshrc', '.zprofile']:
             rcpath = os.path.join(user_home, rcfile)
             if os.path.exists(rcpath):
                 f = open(os.path.join(user_home, rcpath), "r")
                 break
         if not f:
-            raise Exception("No rc files (.bashrc/.zshrc) exist.")
+            raise Exception("No shell rc or profile files exist.")
         self.other_profile_flag = False
         if docker_check():
             f2 = None
