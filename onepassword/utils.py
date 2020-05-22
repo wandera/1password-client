@@ -22,8 +22,9 @@ def docker_check():
         rcpath = os.path.join(user_home, rcfile)
         if os.path.exists(rcpath):
             f = open(os.path.join(user_home, rcpath), "r")
+            break
     if not f:
-        raise Exception("rc file does not exist.")
+        raise Exception("No rc files (.bashrc/.zshrc) exist.")
     bash_profile = f.read()
     try:
         docker_flag = bash_profile.split('DOCKER_FLAG="')[1][0]
@@ -89,8 +90,9 @@ class BashProfile:
             rcpath = os.path.join(user_home, rcfile)
             if os.path.exists(rcpath):
                 f = open(os.path.join(user_home, rcpath), "r")
+                break
         if not f:
-            raise Exception("rc file does not exist.")
+            raise Exception("No rc files (.bashrc/.zshrc) exist.")
         self.other_profile_flag = False
         if docker_check():
             f2 = None
