@@ -23,5 +23,6 @@ deploy:
 after_deploy:
   - git checkout master
   - python -c "from onepassword.utils import bump_version; bump_version()"
+  - git add .
   - git commit -m "[skip travis] Bumping version on master"
   - git push
