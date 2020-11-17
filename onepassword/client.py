@@ -247,7 +247,7 @@ class OnePassword:
         :returns: uuid :obj:`str`: uuid of item or None if doesn't exist
 
         """
-        items = self.get_items(vault=vault)
+        items = self.list_items(vault=vault)
         for t in items:
             if t['overview']['title'] == docname:
                 return t['uuid']
@@ -363,9 +363,9 @@ class OnePassword:
         return read_bash_return('op list vaults')
 
     @staticmethod
-    def get_items(vault="Private"):
+    def list_items(vault="Private"):
         """
-        Helper function to get all items
+        Helper function to list all items in a certain vault
 
         :param vault: vault the items are in (optional, default=Private)
         :type vault: str
@@ -375,3 +375,26 @@ class OnePassword:
         """
         items = json.loads(read_bash_return("op list items --vault={}".format(vault)))
         return items
+
+    @staticmethod
+    def get_item(uuid, fields=None):
+        """
+        Helper function to get a certain field, you can find the UUID you need using list_items
+
+        :param uuid: uuid of the item you wish to get, no vault needed
+        :type uuid: str or bytes
+
+        :param fields: to return only certain detail use either a specific field or list of them
+        (optional, default=None which means all fields returned)
+        :type fields: str or bytes or list
+
+        :return: item :obj: `dict`: dict of the item with requested fields
+
+        """
+        if isinstance(fields, list):
+            item = json.loads(read_bash_return("op get item {} --fields {}".format(uuid, ",".join(fields))))
+        elif isinstance(fields, str):
+            item = {fields: read_bash_return("op get item {} --fields {}".format(uuid, fields))}
+        else:
+            item = json.loads(read_bash_return("op get item {}".format(uuid)))
+        return item
