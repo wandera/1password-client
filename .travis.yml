@@ -3,20 +3,24 @@ branches:
   only:
     - master
 
+arch: amd64
+os: linux
+sudo: required
+
 python:
 - '3.7'
 - '3.8'
 - '3.9'
 
 install:
-  - pip install -r requirements.txt
-  - pip install .
+  - sudo pip install -r requirements.txt
+  - sudo pip install .
 
 before_install:
-  - pip install --upgrade pip
+  - sudo pip install --upgrade pip
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
 
-script: pytest -s
+script: sudo pytest -s
 
 deploy:
   provider: pypi
