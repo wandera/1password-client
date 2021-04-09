@@ -11,7 +11,12 @@ research and python services use cases.
 pip install 1password
 ```
 
-This will install the `op` cli and python client. 
+If you have issues with PyYaml or other disutils installed packages then use:
+```bash
+pip install --ignore-installed 1password
+```
+
+Both of these will install the `op` cli and python client. 
 This is currently fixed at `op` version 1.8.0 to ensure compatibility. If you wish to use a higher version of `op` you
 can by running `op update` in a terminal however note that we cannot ensure it will work with our client yet. 
 

@@ -27,7 +27,7 @@ class OnePassword:
     :returns OnePassword: :obj:`instance`: OnePassword instance to allow code or user to manage credentials.
 
     """
-    def __init__(self, domain=None, email=None, secret=None, password=None):  # pragma: no cover
+    def __init__(self, account=None, domain=None, email=None, secret=None, password=None):  # pragma: no cover
         self.signin_domain = domain
         self.email_address = email
         self.secret_key = secret
@@ -37,7 +37,8 @@ class OnePassword:
         bp.update_profile("OP_DEVICE", device_uuid)
         # Check first time: if true, full signin, else use shortened signin
         if self.check_not_first_time(bp):
-            self.encrypted_master_password, self.session_key = self.signin_wrapper(master_password=password)
+            self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,
+                                                                                   master_password=password)
         else:
             self.first_use()
 
@@ -59,13 +60,13 @@ class OnePassword:
         email_address = input("Please input your email address used for 1Password account: ")
         account = domain_from_email(email_address)
         signin_domain = account + ".1password.com"
-        confirm_signin_domain = input("Is your 1Password domain: {} (y/n)?".format(signin_domain))
+        confirm_signin_domain = input("Is your 1Password domain: {} (y/n)? ".format(signin_domain))
         if confirm_signin_domain == "y":
             pass
         else:
             signin_domain = input("Please input your 1Password domain in the format <something>.1password.com: ")
 
-        confirm_account = input("Is your 1Password account name: {} (y/n)?".format(account))
+        confirm_account = input("Is your 1Password account name: {} (y/n)? ".format(account))
         if confirm_account == "y":
             pass
         else:

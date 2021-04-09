@@ -23,7 +23,7 @@ install:
   - pip install -e .
   - op --version
 
-script: pytest -s 
+script: pytest
 
 deploy:
   provider: pypi
