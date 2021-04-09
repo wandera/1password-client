@@ -3,12 +3,25 @@ branches:
   only:
     - master
 
+arch: amd64
+os: linux
+sudo: required
+
 python:
-- '3.7.6'
+- '3.7'
+- '3.8'
+- '3.9'
+
 
 before_install:
+  - sudo chown travis /usr/local/bin
   - pip install --upgrade pip
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
+
+install:
+  - pip install -r requirements.txt
+  - pip install -e .
+  - op --version
 
 script: pytest
 

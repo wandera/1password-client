@@ -1,8 +1,6 @@
 import os
 import base64
-from bs4 import BeautifulSoup
 from Crypto.Cipher import AES
-from urllib.request import urlopen, Request
 
 
 def read_bash_return(cmd, single=True):
@@ -35,39 +33,6 @@ def docker_check():
     except IndexError:
         return False
 
-
-def scrape(webpage, initial_tag=None, initial_attrs=None, headers=None):
-    """
-    Function to scrape a web page
-
-    :param webpage: web page you wish to scrape
-    :type webpage: str
-
-    :param initial_tag: if you want to find a particular sub element of the HTML enter the
-        parent tag here (optional)
-    :type initial_tag: str
-
-    :param initial_attrs: for multiple parent tags you may want a certain set of attributes
-        to enhance the search, input those here (optional)
-    :type initial_attrs: dict
-
-    :param headers:  :obj:`dict`: headers to use to make request to page
-
-    :return: soup or tag / sub element
-    """
-    if headers is None:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 '
-                          'Safari/537.3'
-        }
-    req = Request(url=webpage, headers=headers)
-    page = urlopen(req)
-    soup = BeautifulSoup(page, 'html.parser')
-    if initial_tag is None:
-        return soup
-    else:
-        sub_element = soup.find(initial_tag, attrs=initial_attrs)
-        return sub_element
 
 
 def domain_from_email(address):
@@ -190,3 +155,12 @@ def bump_version():
     with open("{}/VERSION".format(__root__), "w") as fp:
         fp.write(new_line)
     fp.close()
+
+def generate_uuid():
+    """
+    Generates a random UUID to be used for op in initial set up only for more details read here
+    https://1password.community/discussion/114059/device-uuid
+
+    :return: (str)
+    """
+    return read_bash_return("head -c 16 /dev/urandom | base32 | tr -d = | tr '[:upper:]' '[:lower:]'")

@@ -11,12 +11,23 @@ research and python services use cases.
 pip install 1password
 ```
 
+If you have issues with PyYaml or other distutils installed packages then use:
+```bash
+pip install --ignore-installed 1password
+```
+
+Both of these will install the `op` cli and python client. 
+This is currently fixed at `op` version 1.8.0 to ensure compatibility. If you wish to use a higher version of `op` you
+can by running `op update` in a terminal however note that we cannot ensure it will work with our client yet. 
+
+Mac OS users will be prompted with a seperate installation windows to ensure you have a signed version of `op` - make
+sure to check other desktops that the installer might pop up on. 
 
 ## Basic Usage
-Currently fully tested on Mac OS.
+Currently tested on Mac OS and Linux.
 
 On first usage users will be asked for both the enrolled email, secret key and master 
-password. Mac OS users will also be prompted with installation windows to ensure you have the latest version of `op`.
+password. There is also verification of your account domain and name. 
 
 For all following usages you will only be asked for a master password.
 
@@ -44,6 +55,13 @@ op.get_item(uuid="example", fields=["username", "password"])
 
 ```
 
+### Input formats
+To be sure what you are using is of the right format
+
+- Enrolled email: standard email format e.g. user@example.com 
+- Secret key: provided by 1Password e.g. ##-######-######-#####-#####-#####-#####
+- Account domain: domain that you would login to 1Password via browser e.g. example.1password.com
+- Account name: subdomain or account name that cli can use for multiple account holders e.g. example
 
 ## Contributing 
 The travis build will run with any PR or commit to master branch and then updates 
@@ -115,11 +133,9 @@ This is what still needs developing due to new functionality being released:
 - reactivate: Reactivate a suspended user
 - remove: Revoke access to groups or vaults
 - suspend: Suspend a user
-- update: Check for and download updates - we have some custom code for this but now is covered by CLI
+- update: Check for and download updates
 
 ## Roadmap
-- Fix and test Linux implementation
-- Add UTs
 - Add test docker image
 - Align response types into JSON / lists instead of JSON strings
 - Ensure full and matching functionality of CLI in python
