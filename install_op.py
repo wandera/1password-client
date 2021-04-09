@@ -78,6 +78,7 @@ def install_op():  # pragma: no cover
     machine = str(platform.machine())
     link = platform_links[system][machine]
     local_bin = platform_links[system]["download_loc"]
+    os.chmod(local_bin, 0o755)
     op_file = link.split("/")[-1]
     home_dir = read_bash_return("echo $HOME")
     download_path = os.path.join(home_dir, op_file)
