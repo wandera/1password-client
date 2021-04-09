@@ -12,15 +12,17 @@ python:
 - '3.8'
 - '3.9'
 
-install:
-  - sudo -H pip install --ignore-installed -r requirements.txt
-  - sudo -H pip install .
 
 before_install:
-  - sudo -H pip install --upgrade pip
+  - chmod /usr/local/bin 700
+  - pip install --upgrade pip
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
 
-script: pytest -s
+install:
+  - pip install --ignore-installed -r requirements.txt
+  - pip install .
+
+script: pytest
 
 deploy:
   provider: pypi
