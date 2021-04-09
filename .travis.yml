@@ -21,8 +21,9 @@ before_install:
 install:
   - pip install -r requirements.txt
   - pip install -e .
+  - op --version
 
-script: pytest
+script: pytest -s 
 
 deploy:
   provider: pypi
