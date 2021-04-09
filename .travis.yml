@@ -14,13 +14,13 @@ python:
 
 
 before_install:
-  - sudo chmod 777 /usr/local/bin
+  - sudo chown travis /usr/local/bin
   - pip install --upgrade pip
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
 
 install:
-  - pip install --ignore-installed -r requirements.txt
-  - pip install .
+  - pip install -r requirements.txt
+  - pip install -e .
 
 script: pytest
 
