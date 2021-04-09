@@ -5,7 +5,6 @@ import shutil
 import sys
 from io import StringIO
 from onepassword import OnePassword
-from onepassword.utils import read_bash_return, BeautifulSoup
 
 
 def set_up_one_password():
@@ -14,14 +13,11 @@ def set_up_one_password():
     email = "user@test.com"
     secret = "test_secret"
     password = "test_password"
-    os.environ["HOME"] = 'test_utilities'
     os.mkdir("test_utilities")
     with open('test_utilities/.bash_profile', 'w') as f:
         f.write("")
     f.close()
-    override_platform = 'Linux'
-    return OnePassword(install_only=True, domain=domain, email=email, secret=secret, password=password,
-                       override_platform=override_platform)
+    return OnePassword(domain=domain, email=email, secret=secret, password=password)
 
 
 class TestClient(unittest.TestCase):
@@ -49,21 +45,6 @@ class TestClient(unittest.TestCase):
         """Clear print statements after each test"""
         sys.stdout = self.held
         os.environ["HOME"] = self.user_home
-
-    def test_get_link_version(self):
-        nt, download_link, version = self.op.get_link_version()
-        self.assertIsInstance(nt, BeautifulSoup)
-        self.assertEqual(len(download_link.split(version)), 3)
-        self.assertTrue("https://cache.agilebits.com/dist/1P/op" in download_link)
-        self.assertIsInstance(version, str)
-        self.assertEqual(len(version.split(".")), 3)
-
-    @unittest.skip("Travis not installing op - test in docker?")
-    def test_check_cli(self):
-        self.assertFalse(self.op.check_cli())
-        self.op.install()
-        _, _, v = self.op.get_link_version()
-        self.assertEqual(read_bash_return("op --version"), v)
 
     @unittest.skip("Travis not installing op - test in docker?")
     def test_install(self):

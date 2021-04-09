@@ -1,15 +1,33 @@
-from setuptools import setup
 import os
+from setuptools import setup
+from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 
-root_dir = os.getcwd()
-with open(os.path.join(root_dir, 'VERSION')) as version_file:
-    version = version_file.read().strip()
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        develop.run(self)
+        from install_op import install_op
+        install_op()
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        install.run(self)
+        from install_op import install_op
+        install_op()
 
 
 def readme():
     with open('README.md') as f:
         return f.read()
+
+
+root_dir = os.getcwd()
+with open(os.path.join(root_dir, 'VERSION')) as version_file:
+    version = version_file.read().strip()
 
 
 setup(
@@ -23,16 +41,21 @@ setup(
     install_requires=[
         "wget>=3.2",
         "pyyaml>=5.1.2",
-        "bs4>=0.0.1",
         "pycryptodome>=3.9.7"
     ],
     python_requires='>=3.7',
     license="MIT",
     url="https://github.com/wandera/1password-client",
-    classifiers=["Programming Language :: Python :: 3",
+    classifiers=["Programming Language :: Python :: 3 :: Only",
                  "License :: OSI Approved :: MIT License",
-                 "Operating System :: MacOS :: MacOS X"],
+                 "Operating System :: MacOS :: MacOS X",
+                 "Operating System :: POSIX",
+                 "Operating System :: Unix"],
     packages=["onepassword"],
     tests_require=["nose", "mock"],
     test_suite="nose.collector",
+    cmdclass={
+        'develop': PostDevelopCommand,
+        'install': PostInstallCommand,
+    }
 )
