@@ -79,8 +79,8 @@ def install_op():  # pragma: no cover
     link = platform_links[system][machine]
     local_bin = platform_links[system]["download_loc"]
     op_file = link.split("/")[-1]
-    download_path = os.path.join(local_bin, op_file)
-
+    home_dir = read_bash_return("echo $HOME")
+    download_path = os.path.join(home_dir, op_file)
     print('Downloading the 1Password CLI: {}'.format(op_file))
     wget.download(link, download_path)
     if link[-4:] != ".pkg":
