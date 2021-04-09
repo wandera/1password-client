@@ -11,7 +11,7 @@ research and python services use cases.
 pip install 1password
 ```
 
-If you have issues with PyYaml or other disutils installed packages then use:
+If you have issues with PyYaml or other distutils installed packages then use:
 ```bash
 pip install --ignore-installed 1password
 ```
