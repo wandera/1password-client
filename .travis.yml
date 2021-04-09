@@ -4,13 +4,17 @@ branches:
     - master
 
 python:
-- '3.7.6'
+- '3.9.2'
+
+install:
+  - pip install -r requirements.txt
+  - pip install . 
 
 before_install:
   - pip install --upgrade pip
   - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
 
-script: pytest
+script: pytest -s
 
 deploy:
   provider: pypi

@@ -40,7 +40,7 @@ setup(
     long_description_content_type='text/markdown',
     install_requires=[
         "wget>=3.2",
-        "pyyaml>=5.1.2",
+        "pyyaml>=5.4",
         "pycryptodome>=3.9.7"
     ],
     python_requires='>=3.7',
