@@ -12,7 +12,7 @@ def set_up_one_password():
     domain = "test"
     email = "user@test.com"
     secret = "test_secret"
-    password = "test_password"
+    password = "a234567890b234567890c234567890d234567890e23"
     account = "test"
     with open('.bash_profile', 'w') as f:
         f.write("OP_SESSION_test=fakelettersforsessionkey")
