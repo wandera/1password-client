@@ -1,6 +1,10 @@
 import os
 import base64
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+
+
+BLOCK_SIZE = 32 # Bytes
 
 
 def read_bash_return(cmd, single=True):
@@ -128,14 +132,14 @@ class BashProfile:
 
 class Encryption:
     def __init__(self, secret_key):
-        self.secret_key = secret_key[0:32]
+        self.secret_key = secret_key[0:BLOCK_SIZE]
         self.cipher = AES.new(self.secret_key, AES.MODE_ECB)
 
     def decode(self, encoded):
-        return self.cipher.decrypt(base64.b64decode(encoded)).decode('UTF-8').replace(" ", "")
+        return self.cipher.decrypt(base64.b64decode(encoded)).decode('UTF-8').replace("\x1f", "")
 
     def encode(self, input_str):
-        return base64.b64encode(self.cipher.encrypt(input_str.rjust(32)))
+        return base64.b64encode(self.cipher.encrypt(pad(input_str, BLOCK_SIZE)))
 
 
 def bump_version():
