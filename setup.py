@@ -52,10 +52,11 @@ setup(
                  "Operating System :: POSIX",
                  "Operating System :: Unix"],
     packages=["onepassword"],
-    tests_require=["nose", "mock"],
+    tests_require=["nose", "mock", "pytest"],
     test_suite="nose.collector",
     cmdclass={
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
-    }
+    },
+    setup_requires=["wget"]
 )
