@@ -39,8 +39,9 @@ platform_links = {
         "download_loc": "/usr/local/bin/"
     },
     "Windows": {
-        "386": "https://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_windows_386_v1.8.0.zip",
-        "amd64": "https://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_windows_amd64_v1.8.0.zip"
+        "386": "http://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_windows_386_v1.8.0.zip",
+        "AMD64": "http://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_windows_amd64_v1.8.0.zip",
+        "download_loc": ""
     }
 }
 
@@ -77,10 +78,21 @@ def install_op():  # pragma: no cover
     system = str(platform.system())
     machine = str(platform.machine())
     link = platform_links[system][machine]
-    local_bin = platform_links[system]["download_loc"]
+
+    if system == "Windows":
+        local_bin = os.path.join(os.environ["HOMEPATH"], "op")
+        os.chmod(local_bin, 0o755)
+        if not os.path.exists(local_bin):
+            os.makedirs(local_bin)
+    else:
+        local_bin = platform_links[system]["download_loc"]
+
     os.chmod(local_bin, 0o755)
     op_file = link.split("/")[-1]
-    home_dir = read_bash_return("echo $HOME")
+    if system != "Windows":
+        home_dir = read_bash_return("echo $HOME")
+    else:
+        home_dir = local_bin
     download_path = os.path.join(home_dir, op_file)
     print('Downloading the 1Password CLI: {}'.format(op_file))
     wget.download(link, download_path)
