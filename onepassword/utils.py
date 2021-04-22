@@ -1,10 +1,13 @@
 import os
 import base64
+import pexpect
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 
 
-BLOCK_SIZE = 32 # Bytes
+BLOCK_SIZE = 32  # Bytes
+master_password_regex = "Enter the password for [a-zA-Z0-9._%+-]+\\@[a-zA-Z0-9-]+\\.[a-zA-z]{2,4} at " \
+                        "[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-z]{2,4}"
 
 
 def read_bash_return(cmd, single=True):
@@ -38,7 +41,6 @@ def docker_check():
         return False
 
 
-
 def domain_from_email(address):
     """
     Method to extract a domain without sld or tld from an email address
@@ -49,6 +51,43 @@ def domain_from_email(address):
     :return: domain (str)
     """
     return address.split("@")[1].split(".")[0]
+
+
+def get_session_key(process_resp_before):
+    new_line_response = [x for x in str(process_resp_before).split(" ") if "\\r\\n" in x]
+    if len(new_line_response) != 1:
+        raise IndexError("Session keys not parsed correctly from response: {}.".format(process_resp_before))
+    else:
+        return new_line_response[0].split("\\r\\n")[1]
+
+
+def _spawn_signin(command, m_password):
+    if command != "":
+        child = pexpect.spawn(command)
+        child.expect([master_password_regex, pexpect.EOF])
+        if child.isalive():
+            try:
+                child.sendline(m_password)
+            except OSError:
+                child.close()
+                child = pexpect.spawn(command)
+                child.expect([master_password_regex, pexpect.EOF])
+                child.sendline(m_password)
+        else:
+            child.close()
+            child = pexpect.spawn(command)
+            child.expect([master_password_regex, pexpect.EOF])
+            child.sendline(m_password)
+        resp = child.expect(['Enter your six-digit authentication code:', pexpect.EOF])
+        if resp != 1:
+            auth_code = str(input("Please input your 1Password six-digit authentication code: "))
+            child.sendline(auth_code)
+            child.expect(pexpect.EOF)
+        sess_key = get_session_key(child.before)
+        child.close()
+        return sess_key
+    else:
+        raise IOError("Spawn command not valid")
 
 
 class BashProfile:
@@ -118,11 +157,12 @@ class BashProfile:
         for p in prof_name:
             with open(p, 'w') as writer:
                 writer.writelines(updated_lines)
+                writer.close()
 
     def update_profile(self, key, value):
-        for l in self.profile_lines:
-            if key in l:
-                self.profile_lines.remove(l)
+        for lines in self.profile_lines:
+            if key in lines:
+                self.profile_lines.remove(lines)
 
         if isinstance(value, str):
             new_line = 'export {}="{}"\n'.format(key, value)
@@ -132,7 +172,10 @@ class BashProfile:
 
 class Encryption:
     def __init__(self, secret_key):
-        self.secret_key = secret_key[0:BLOCK_SIZE]
+        if isinstance(secret_key, str):
+            self.secret_key = str.encode(secret_key)[0:BLOCK_SIZE]
+        else:
+            self.secret_key = secret_key[0:BLOCK_SIZE]
         self.cipher = AES.new(self.secret_key, AES.MODE_ECB)
 
     def decode(self, encoded):
@@ -159,6 +202,7 @@ def bump_version():
     with open("{}/VERSION".format(__root__), "w") as fp:
         fp.write(new_line)
     fp.close()
+
 
 def generate_uuid():
     """

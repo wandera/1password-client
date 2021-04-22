@@ -37,11 +37,6 @@ platform_links = {
         "i686": "https://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_openbsd_386_v1.8.0.zip",
         "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_openbsd_amd64_v1.8.0.zip",
         "download_loc": "/usr/local/bin/"
-    },
-    "Windows": {
-        "386": "http://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_windows_386_v1.8.0.zip",
-        "AMD64": "http://cache.agilebits.com/dist/1P/op/pkg/v1.8.0/op_windows_amd64_v1.8.0.zip",
-        "download_loc": ""
     }
 }
 
@@ -73,27 +68,15 @@ def check_install_required():  # pragma: no cover
 def install_op():  # pragma: no cover
     """
     Helper function to download, unzip, install and chmod op cli files
-
     """
     system = str(platform.system())
     machine = str(platform.machine())
     link = platform_links[system][machine]
-
-    if system == "Windows":
-        local_bin = os.path.join(os.environ["HOMEPATH"], "op")
-        os.chmod(local_bin, 0o755)
-        if not os.path.exists(local_bin):
-            os.makedirs(local_bin)
-    else:
-        local_bin = platform_links[system]["download_loc"]
-
+    local_bin = platform_links[system]["download_loc"]
     os.chmod(local_bin, 0o755)
     op_file = link.split("/")[-1]
-    if system != "Windows":
-        home_dir = read_bash_return("echo $HOME")
-    else:
-        home_dir = local_bin
-    download_path = os.path.join(home_dir, op_file)
+    # home_dir = read_bash_return("echo $HOME")
+    download_path = os.path.join(local_bin, op_file)
     print('Downloading the 1Password CLI: {}'.format(op_file))
     wget.download(link, download_path)
     if link[-4:] != ".pkg":
@@ -107,3 +90,10 @@ def install_op():  # pragma: no cover
             Popen(["open", os.path.join(local_bin, op_file)], stdin=PIPE, stdout=PIPE)  # pragma: no cover
         else:
             pass
+
+
+def install_chocolatey():
+    """
+    Helper function for installing Windows package management requires that installation performed in admin role
+    """
+    pass
