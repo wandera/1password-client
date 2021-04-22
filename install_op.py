@@ -75,7 +75,6 @@ def install_op():  # pragma: no cover
     local_bin = platform_links[system]["download_loc"]
     os.chmod(local_bin, 0o755)
     op_file = link.split("/")[-1]
-    # home_dir = read_bash_return("echo $HOME")
     download_path = os.path.join(local_bin, op_file)
     print('Downloading the 1Password CLI: {}'.format(op_file))
     wget.download(link, download_path)
@@ -84,7 +83,6 @@ def install_op():  # pragma: no cover
         zip_ref.extractall(local_bin)
         zip_ref.close()
         os.chmod(os.path.join(local_bin, 'op'), 0o755)
-        # print("Installed: {}".format(os.path.join(self.local_bin, op_file)))
     else:
         if check_install_required():
             Popen(["open", os.path.join(local_bin, op_file)], stdin=PIPE, stdout=PIPE)  # pragma: no cover

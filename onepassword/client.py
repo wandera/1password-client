@@ -152,9 +152,6 @@ class OnePassword:
                 if 'session_key' and 'encrypted_master_password' in initiated_class.__dict__:
                     encrypt = Encryption(initiated_class.session_key)
                     master_password = str.encode(encrypt.decode(initiated_class.encrypted_master_password))
-            # elif 'session_key' and 'encrypted_str' in globals():
-            #     encrypt = Encryption(globals()['session_key'])
-            #     master_password = str.encode(encrypt.decode(globals()['encrypted_str']))
             else:
                 master_password = str.encode(getpass("Please input your 1Password master password: "))
         if secret_key:
@@ -291,10 +288,6 @@ class OnePassword:
         Helper function to sign out of 1pass
 
         """
-        # global session_key
-        # global encrypted_str
-        # session_key = self.session_key
-        # encrypted_str = self.encrypted_master_password
         read_bash_return('op signout')
 
     @staticmethod
