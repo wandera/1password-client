@@ -41,7 +41,8 @@ setup(
     install_requires=[
         "wget>=3.2",
         "pyyaml>=5.4",
-        "pycryptodome>=3.9.7"
+        "pycryptodome>=3.9.7",
+        "pexpect>=4.7.0"
     ],
     python_requires='>=3.7',
     license="MIT",

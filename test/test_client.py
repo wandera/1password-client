@@ -1,37 +1,31 @@
 import unittest
 import os
-import platform
-import shutil
 import sys
 from io import StringIO
-from onepassword import OnePassword
+# from onepassword import OnePassword
 
 
 def set_up_one_password():
     """Set up a mock OnePassword Vault"""
-    domain = "test"
-    email = "user@test.com"
-    secret = "test_secret"
-    password = "a234567890b234567890c234567890d234567890e23"
-    account = "test"
+    # domain = "test"
+    # email = "user@test.com"
+    # secret = "test_secret"
+    # password = "a234567890b234567890c234567890d234567890e23"
+    # account = "test"
     with open('.bash_profile', 'w') as f:
-        f.write("OP_SESSION_test=fakelettersforsessionkey")
+        f.write("OP_SESSION_test=fakelettersforsessionkey\n")
     f.close()
     os.environ["OP_SESSION_test"] = 'fakelettersforsessionkey'
-    return OnePassword(account=account, domain=domain, email=email, secret=secret, password=password)
+    # return OnePassword(account=account, domain=domain, email=email, secret=secret, password=password)
 
 
 class TestClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('--- Set up TestClient ---')
-        # if str(platform.system()) == 'Linux':
-        #     cls.user_home = "/usr/local/bin"
-        # else:
-        #     cls.user_home = os.environ["HOME"]
         cls.user_home = "."
         os.environ["HOME"] = "."
-        cls.op = set_up_one_password()
+        set_up_one_password()
 
     @classmethod
     def tearDownClass(cls):
@@ -61,11 +55,13 @@ class TestClient(unittest.TestCase):
 
     @unittest.skip("Travis bash profile cannot be read.")
     def test_signin(self):
-        p, s, d, b = self.op.signin(self.op.signin_domain, self.op.email_address, self.op.secret_key, "test_password")
-        self.assertEqual(p, b"test_password")
-        self.assertIn(b"(ERROR)  invalid account key length\n", s)
-        self.assertEqual(d, "test")
-        self.assertGreater(len(b.profile_lines), 0)
+        # p, s, d, b = self.op._signin(self.op.signin_domain, self.op.email_address, self.op.secret_key,
+        # "test_password")
+        # self.assertEqual(p, b"test_password")
+        # self.assertIn(b"(ERROR)  invalid account key length\n", s)
+        # self.assertEqual(d, "test")
+        # self.assertGreater(len(b.profile_lines), 0)
+        pass
 
     def test_get_uuid(self):
         """

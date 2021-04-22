@@ -1,6 +1,6 @@
 # OnePassword python client
 [![Build Status](https://travis-ci.org/wandera/1password-client.svg?branch=master)](https://travis-ci.org/wandera/1password-client)
-
+[![CodeQL](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml)
 Python wrapper around 1Password password manager for usage within python scripts and
 Jupyter Notebooks. Developed by Data Scientists from Wandera to be used within both 
 research and python services use cases.
@@ -35,6 +35,8 @@ You will be given 3 attempts and then pointed to reset password documentation or
 restart your kernel.
 
 No passwords are stored in memory without encryption.
+
+If you have 2FA turned on for your 1Password account the client will ask for your six digit authenticator code.
 
 ```python
 from onepassword import OnePassword
@@ -136,7 +138,11 @@ This is what still needs developing due to new functionality being released:
 - update: Check for and download updates
 
 ## Roadmap
+- Add Windows functionality
+- Add clean uninstall of client and op
+- Remove subprocess usage everywhere -> use pexpect
 - Add test docker image
+- Get full UT coverage
 - Align response types into JSON / lists instead of JSON strings
 - Ensure full and matching functionality of CLI in python
     - add

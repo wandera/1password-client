@@ -2,9 +2,8 @@ import os
 import json
 import yaml
 from getpass import getpass
-from subprocess import Popen, PIPE, STDOUT
 from json import JSONDecodeError
-from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, generate_uuid
+from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, generate_uuid, _spawn_signin
 from onepassword.exceptions import OnePasswordForgottenPassword
 
 
@@ -98,22 +97,21 @@ class OnePassword:
         :return: encrypted_str, session_key - used by signin to know of existing login
 
         """
-        global session_key
-        global encrypted_str
-        password, session_key, domain, account, bp = self.signin(account, domain, email, secret_key, master_password)
+
+        password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key, master_password)
         tries = 1
         while tries < 3:
-            if "(ERROR)  401" in session_key.decode():
+            if "(ERROR)  401" in session_key:
                 print("That's not the right password, try again.")
-                password, session_key, domain, account, bp = self.signin(account, domain, email, secret_key,
-                                                                         master_password)
+                password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key,
+                                                                          master_password)
                 tries += 1
                 pass
             else:
                 # device_uuid = generate_uuid()
-                os.environ["OP_SESSION_{}".format(account)] = session_key.decode().replace("\n", "")
+                os.environ["OP_SESSION_{}".format(account)] = session_key.replace("\n", "")
                 # os.environ["OP_DEVICE"] = device_uuid
-                bp.update_profile("OP_SESSION_{}".format(account), session_key.decode().replace("\n", ""))
+                bp.update_profile("OP_SESSION_{}".format(account), session_key.replace("\n", ""))
                 # bp.update_profile("OP_DEVICE", device_uuid)
                 encrypt = Encryption(session_key)
                 encrypted_str = encrypt.encode(password)
@@ -122,7 +120,7 @@ class OnePassword:
                                            "https://support.1password.com/forgot-master-password/")
 
     @staticmethod
-    def signin(account=None, domain=None, email=None, secret_key=None, master_password=None):  # pragma: no cover
+    def _signin(account=None, domain=None, email=None, secret_key=None, master_password=None):  # pragma: no cover
         """
         Helper function to prepare sign in for the user
 
@@ -145,17 +143,19 @@ class OnePassword:
 
         """
         bp = BashProfile()
+        op_command = ""
         if master_password is not None:
             master_password = str.encode(master_password)
         else:
-            if 'session_key' and 'encrypted_str' in globals():
-                encrypt = Encryption(globals()['session_key'])
-                master_password = str.encode(encrypt.decode(globals()['encrypted_str']))
+            if 'op' in locals():
+                initiated_class = locals()["op"]
+                if 'session_key' and 'encrypted_master_password' in initiated_class.__dict__:
+                    encrypt = Encryption(initiated_class.session_key)
+                    master_password = str.encode(encrypt.decode(initiated_class.encrypted_master_password))
             else:
                 master_password = str.encode(getpass("Please input your 1Password master password: "))
         if secret_key:
-            process = Popen(['op', "signin", domain, email, secret_key, "--raw", "--shorthand", account], stdout=PIPE,
-                            stdin=PIPE, stderr=STDOUT)
+            op_command = "op signin {} {} {} --raw --shorthand {}".format(domain, email, secret_key, account)
         else:
             if account is None:
                 try:
@@ -166,11 +166,8 @@ class OnePassword:
                                     "wandera.1password.com: ")
                 except ValueError:
                     raise ValueError("First signin failed or not executed.")
-            process = Popen(['op', "signin", account, "--raw"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-
-        process.stdin.write(master_password)
-        sess_key = process.communicate()[0]
-        process.stdin.close()
+                op_command = "op signin {} --raw".format(account)
+        sess_key = _spawn_signin(op_command, master_password)
         return master_password, sess_key, domain, account, bp
 
     def get_uuid(self, docname, vault="Private"):  # pragma: no cover
@@ -234,7 +231,7 @@ class OnePassword:
         # [--tags=<tags>]
         response = read_bash_return(cmd)
         if len(response) == 0:
-            self.signin()
+            self._signin()
             read_bash_return(cmd)
             # self.signout()
         # else:
@@ -255,7 +252,7 @@ class OnePassword:
         cmd = "op delete item {} --vault={}".format(docid, vault)
         response = read_bash_return(cmd)
         if len(response) > 0:
-            self.signin()
+            self._signin()
             read_bash_return(cmd)
             # self.signout()
         # else:
@@ -291,7 +288,7 @@ class OnePassword:
         Helper function to sign out of 1pass
 
         """
-        return read_bash_return('op signout')
+        read_bash_return('op signout')
 
     @staticmethod
     def list_vaults():
