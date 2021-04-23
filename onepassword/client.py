@@ -166,7 +166,7 @@ class OnePassword:
                                     "wandera.1password.com: ")
                 except ValueError:
                     raise ValueError("First signin failed or not executed.")
-                op_command = "op signin {} --raw".format(account)
+            op_command = "op signin {} --raw".format(account)
         sess_key = _spawn_signin(op_command, master_password)
         return master_password, sess_key, domain, account, bp
 
