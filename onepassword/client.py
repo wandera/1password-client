@@ -3,7 +3,7 @@ import json
 import yaml
 from getpass import getpass
 from json import JSONDecodeError
-from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, generate_uuid, _spawn_signin
+from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, get_device_uuid, _spawn_signin
 from onepassword.exceptions import OnePasswordForgottenPassword
 
 
@@ -30,10 +30,8 @@ class OnePassword:
         self.signin_domain = domain
         self.email_address = email
         self.secret_key = secret
-        device_uuid = generate_uuid()
-        os.environ["OP_DEVICE"] = device_uuid
         bp = BashProfile()
-        bp.update_profile("OP_DEVICE", device_uuid)
+        os.environ["OP_DEVICE"] = get_device_uuid(bp)
         # Check first time: if true, full signin, else use shortened signin
         if self.check_not_first_time(bp):
             self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,

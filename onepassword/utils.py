@@ -1,5 +1,6 @@
 import os
 import base64
+
 import pexpect
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
@@ -212,3 +213,20 @@ def generate_uuid():
     :return: (str)
     """
     return read_bash_return("head -c 16 /dev/urandom | base32 | tr -d = | tr '[:upper:]' '[:lower:]'")
+
+
+def get_device_uuid(bp):
+    """
+    Attempts to get the device_uuid from the given BashProfile. If the device_uuid is not
+    set in the BashProfile generates a new device_uuid and sets it in the given
+    BashProfile.
+
+    :return: (str)
+    """
+    try:
+        device_uuid = bp.get_key_value("OP_DEVICE")[0]['OP_DEVICE'].strip('"')
+    except AttributeError:
+        device_uuid = generate_uuid()
+        bp.update_profile("OP_DEVICE", device_uuid)
+
+    return device_uuid
