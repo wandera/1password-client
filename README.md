@@ -1,10 +1,15 @@
-# OnePassword python client
+docker tag local-image:tagname new-repo:tagname# OnePassword python client
 [![Build Status](https://travis-ci.org/wandera/1password-client.svg?branch=master)](https://travis-ci.org/wandera/1password-client)
 [![CodeQL](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml)
 Python wrapper around 1Password password manager for usage within python scripts and
 Jupyter Notebooks. Developed by Data Scientists from Wandera to be used within both 
 research and python services use cases.
 
+## Run Docker Util to compare inconsistency between two vaults for structures (fieldname, type, etc.)
+```docker run -it --rm -v $HOME/.op:/home/app_user/.op skybirdit/compare_1password_vaults compare.py vaultA vaultB```
+example: 
+```docker run -it --rm -v $HOME/.op:/home/app_user/.op skybirdit/compare_1password_vaults compare.py uat staging```
+will compare the two vaults: uat and staging, to print out any inconsistency in their secret names and secret fieldnames.
 
 ## Installation
 ```bash
