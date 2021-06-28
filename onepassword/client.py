@@ -32,8 +32,11 @@ class OnePassword:
         self.secret_key = secret
         bp = BashProfile()
         os.environ["OP_DEVICE"] = get_device_uuid(bp)
+        # reuse existing op session
+        if "OP_SESSION_{}".format(account) in os.environ:
+            pass
         # Check first time: if true, full signin, else use shortened signin
-        if self.check_not_first_time(bp):
+        elif self.check_not_first_time(bp):
             self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,
                                                                                    master_password=password)
         else:
