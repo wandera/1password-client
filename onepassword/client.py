@@ -307,7 +307,7 @@ class OnePassword:
         :returns: items :obj:`dict`: dict of all items
 
         """
-        items = json.loads(read_bash_return("op list items --vault={}".format(vault)))
+        items = json.loads(read_bash_return("op list items --vault='{}'".format(vault)))
         return items
 
     @staticmethod
