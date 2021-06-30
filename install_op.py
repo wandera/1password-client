@@ -69,6 +69,10 @@ def install_op():  # pragma: no cover
     """
     Helper function to download, unzip, install and chmod op cli files
     """
+
+    if not check_install_required():
+        return
+
     system = str(platform.system())
     machine = str(platform.machine())
     link = platform_links[system][machine]
@@ -84,10 +88,7 @@ def install_op():  # pragma: no cover
         zip_ref.close()
         os.chmod(os.path.join(local_bin, 'op'), 0o755)
     else:
-        if check_install_required():
-            Popen(["open", os.path.join(local_bin, op_file)], stdin=PIPE, stdout=PIPE)  # pragma: no cover
-        else:
-            pass
+        Popen(["open", os.path.join(local_bin, op_file)], stdin=PIPE, stdout=PIPE)  # pragma: no cover
 
 
 def install_chocolatey():
