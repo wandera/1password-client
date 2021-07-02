@@ -16,12 +16,24 @@ If you have issues with PyYaml or other distutils installed packages then use:
 pip install --ignore-installed 1password
 ```
 
-Both of these will install the `op` cli and python client. 
+You are welcome to install and manage `op` yourself by visiting https://support.1password.com/command-line-getting-started/
+
+The above commands will check `op` is present already and if not will install the best `op` cli it can work out plus 
+the python client itself. 
 This is currently fixed at `op` version 1.8.0 to ensure compatibility. If you wish to use a higher version of `op` you
 can by running `op update` in a terminal however note that we cannot ensure it will work with our client yet. 
 
 Mac OS users will be prompted with a seperate installation windows to ensure you have a signed version of `op` - make
 sure to check other desktops that the installer might pop up on. 
+
+### Optional pre-requisites
+#### base32
+This utility is used to create a unique guid for your device but this isn't a hard requirement from AgileBits 
+and so if you see `base32: command not found` an empty string will be used instead, 
+and the client will still work fully.
+
+If you really want to, you can make sure you have this installed by installing coreutils. Details per platform can
+be found here: https://command-not-found.com/base32
 
 ## Basic Usage
 Currently tested on Mac OS and Linux.
