@@ -1,10 +1,10 @@
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: PyPi release
 
 on: push
 
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: PyPi release
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,6 +16,11 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install pre-requisities
+      run: >-
+        python -m
+        setup.py
+        install
     - name: Run UTs
       run: >-
         python -m

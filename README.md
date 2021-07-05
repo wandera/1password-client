@@ -1,6 +1,7 @@
 # OnePassword python client
-[![Build Status](https://travis-ci.org/wandera/1password-client.svg?branch=master)](https://travis-ci.org/wandera/1password-client)
+![Release Status](https://github.com/wandera/1password-client/actions/workflows/publish-to-pypi.yml/badge.svg)
 [![CodeQL](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml)
+
 Python wrapper around 1Password password manager for usage within python scripts and
 Jupyter Notebooks. Developed by Data Scientists from Wandera to be used within both 
 research and python services use cases.
