@@ -1,10 +1,9 @@
 # OnePassword python client
-![Release Status](https://github.com/wandera/1password-client/actions/workflows/publish-to-pypi.yml/badge.svg)
+[![PyPi release](https://github.com/wandera/1password-client/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/publish-to-pypi.yml)
 [![CodeQL](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml)
 
-Python wrapper around 1Password password manager for usage within python scripts and
-Jupyter Notebooks. Developed by Data Scientists from Wandera to be used within both 
-research and python services use cases.
+Python client around the 1Password password manager cli for usage within python code and
+Jupyter Notebooks. Developed by Data Scientists from Wandera (a Jamf company).
 
 
 ## Installation
@@ -17,7 +16,8 @@ If you have issues with PyYaml or other distutils installed packages then use:
 pip install --ignore-installed 1password
 ```
 
-You are welcome to install and manage `op` yourself by visiting https://support.1password.com/command-line-getting-started/
+You are welcome to install and manage `op` yourself by visiting 
+https://support.1password.com/command-line-getting-started/
 
 The above commands will check `op` is present already and if not will install the best `op` cli it can work out plus 
 the python client itself. 
@@ -39,10 +39,10 @@ be found here: https://command-not-found.com/base32
 ## Basic Usage
 Currently tested on Mac OS and Linux.
 
-On first usage users will be asked for both the enrolled email, secret key and master 
-password. There is also verification of your account domain and name. 
+On first usage users will be asked for both the enrolled email, secret key and password. 
+There is also verification of your account domain and name. 
 
-For all following usages you will only be asked for a master password.
+For all following usages you will only be asked for a password.
 
 You will be given 3 attempts and then pointed to reset password documentation or alternatively you can
 restart your kernel.
@@ -79,13 +79,14 @@ To be sure what you are using is of the right format
 - Account name: subdomain or account name that cli can use for multiple account holders e.g. example
 
 ## Contributing 
-The travis build will run with any PR or commit to master branch and then updates 
-the master branch with a new minor version for contributors to branch from.
+The GitHub action will run a full build, test and release on any push. 
+If this is to the main branch then this will release to public PyPi and bump the patch version.
 
-This means when contributing you should create a feature branch off of the master branch and without 
-manually bumping the version can focus on development. Merge back into master.
+For a major or minor branch update your new branch should include this new version and this should be verified by the 
+code owners.
 
-Later admins will bump major versions.
+In general, this means when contributing you should create a feature branch off of the main branch and without 
+manually bumping the version you can focus on development.
 
 ## CLI coverage
 Full op documentation can be found here: https://support.1password.com/command-line-reference/
