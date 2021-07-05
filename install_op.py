@@ -34,7 +34,7 @@ platform_links = {
     "Linux": {
         "i386": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_386_{}.zip".format(version_string,
                                                                                            version_string),
-        "i686": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_386_{].zip".format(version_string,
+        "i686": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_386_{}.zip".format(version_string,
                                                                                            version_string),
         "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_amd64_{}.zip".format(version_string,
                                                                                                version_string),
