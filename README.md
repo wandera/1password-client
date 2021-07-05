@@ -20,7 +20,7 @@ You are welcome to install and manage `op` yourself by visiting https://support.
 
 The above commands will check `op` is present already and if not will install the best `op` cli it can work out plus 
 the python client itself. 
-This is currently fixed at `op` version 1.8.0 to ensure compatibility. If you wish to use a higher version of `op` you
+This is currently fixed at `op` version 1.10.3 to ensure compatibility. If you wish to use a higher version of `op` you
 can by running `op update` in a terminal however note that we cannot ensure it will work with our client yet. 
 
 Mac OS users will be prompted with a seperate installation windows to ensure you have a signed version of `op` - make
