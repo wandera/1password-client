@@ -47,7 +47,7 @@ setup(
     python_requires='>=3.7',
     license="MIT",
     url="https://github.com/wandera/1password-client",
-    classifiers=["Programming Language :: Python :: 3 :: Only",
+    classifiers=["Programming Language :: Python :: 3.9",
                  "License :: OSI Approved :: MIT License",
                  "Operating System :: MacOS :: MacOS X",
                  "Operating System :: POSIX",

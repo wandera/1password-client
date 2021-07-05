@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ 3.6, 3.7, 3.8, 3.9 ]
+        python-version: 3.9
 
     steps:
     - uses: actions/checkout@master
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.9
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.9
     - name: Install environment requirements
       run: >-
         python -m
@@ -55,10 +55,14 @@ jobs:
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
-        python-version: 3.9
     - name: Publish distribution 📦 to PyPI
       if: ${{ github.ref == 'refs/heads/main' }}
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
-        python-version: 3.9
+    - name: Push version update
+      run: >-
+        git checkout master
+        git add .
+        git commit -m "[actions skip] GitHub bumping the version"
+        git push
