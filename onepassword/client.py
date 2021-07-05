@@ -3,7 +3,8 @@ import json
 import yaml
 from getpass import getpass
 from json import JSONDecodeError
-from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, get_device_uuid, _spawn_signin
+from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, get_device_uuid, \
+    _spawn_signin
 from onepassword.exceptions import OnePasswordForgottenPassword
 
 
@@ -32,8 +33,11 @@ class OnePassword:
         self.secret_key = secret
         bp = BashProfile()
         os.environ["OP_DEVICE"] = get_device_uuid(bp)
+        # reuse existing op session
+        if isinstance(account, str) and "OP_SESSION_{}".format(account) in os.environ:
+            pass
         # Check first time: if true, full signin, else use shortened signin
-        if self.check_not_first_time(bp):
+        elif self.check_not_first_time(bp):
             self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,
                                                                                    master_password=password)
         else:
@@ -201,9 +205,9 @@ class OnePassword:
         """
         docid = self.get_uuid(docname, vault=vault)
         try:
-            return json.loads(read_bash_return("op get document {} --vault={}".format(docid, vault), single=False))
+            return json.loads(read_bash_return("op get document {} --vault='{}'".format(docid, vault), single=False))
         except JSONDecodeError:
-            yaml_attempt = yaml.safe_load(read_bash_return("op get document {} --vault={}".format(docid, vault),
+            yaml_attempt = yaml.safe_load(read_bash_return("op get document {} --vault='{}'".format(docid, vault),
                                                            single=False))
             if isinstance(yaml_attempt, dict):
                 return yaml_attempt
@@ -225,7 +229,7 @@ class OnePassword:
         :type vault: str
 
         """
-        cmd = "op create document {} --title={} --vault={}".format(filename, title, vault)
+        cmd = "op create document {} --title={} --vault='{}'".format(filename, title, vault)
         # [--tags=<tags>]
         response = read_bash_return(cmd)
         if len(response) == 0:
@@ -247,7 +251,7 @@ class OnePassword:
 
         """
         docid = self.get_uuid(title, vault=vault)
-        cmd = "op delete item {} --vault={}".format(docid, vault)
+        cmd = "op delete item {} --vault='{}'".format(docid, vault)
         response = read_bash_return(cmd)
         if len(response) > 0:
             self._signin()
@@ -307,7 +311,7 @@ class OnePassword:
         :returns: items :obj:`dict`: dict of all items
 
         """
-        items = json.loads(read_bash_return("op list items --vault={}".format(vault)))
+        items = json.loads(read_bash_return("op list items --vault='{}'".format(vault)))
         return items
 
     @staticmethod

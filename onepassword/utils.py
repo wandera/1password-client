@@ -5,11 +5,9 @@ import pexpect
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 
-
 BLOCK_SIZE = 32  # Bytes
 master_password_regex = "Enter the password for [a-zA-Z0-9._%+-]+\\@[a-zA-Z0-9-]+\\.[a-zA-z]{2,4} at " \
-                        "[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-z]{2,4}"
-
+                        "[a-zA-Z0-9-.]+\\.1password+\\.[a-zA-z]{2,4}"
 
 def read_bash_return(cmd, single=True):
     process = os.popen(cmd)
