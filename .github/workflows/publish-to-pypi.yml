@@ -40,7 +40,6 @@ jobs:
         build
         --sdist
         --wheel
-        --universal
         --outdir dist/
         .
     - name: Publish distribution 📦 to Test PyPI
