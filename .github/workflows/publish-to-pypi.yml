@@ -34,12 +34,11 @@ jobs:
     - name: Bump patch version
       run: >-
         python -c "from onepassword.utils import bump_version; bump_version(version_type='patch')"
-    - name: Build a binary wheel and a source tarball
+    - name: Build a source tarball
       run: >-
         python -m
         build
         --sdist
-        --wheel
         --outdir dist/
         .
     - name: Publish distribution 📦 to Test PyPI
