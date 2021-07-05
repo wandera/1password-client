@@ -34,6 +34,14 @@ jobs:
         pip install
         build
         --user
+    - name: Bump minor version
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: >-
+        python -c "from onepassword.utils import bump_version; bump_version(version_type='minor')"
+    - name: Bump patch version
+      if: ${{ github.ref != 'refs/heads/main' }}
+      run: >-
+        python -c "from onepassword.utils import bump_version; bump_version(version_type='patch')"
     - name: Build a binary wheel and a source tarball
       run: >-
         python -m
@@ -47,8 +55,10 @@ jobs:
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
+        python-version: 3.9
     - name: Publish distribution 📦 to PyPI
       if: ${{ github.ref == 'refs/heads/main' }}
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
+        python-version: 3.9
