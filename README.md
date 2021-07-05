@@ -1,9 +1,9 @@
 # OnePassword python client
-[![Build Status](https://travis-ci.org/wandera/1password-client.svg?branch=master)](https://travis-ci.org/wandera/1password-client)
+[![PyPi release](https://github.com/wandera/1password-client/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/publish-to-pypi.yml)
 [![CodeQL](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml)
-Python wrapper around 1Password password manager for usage within python scripts and
-Jupyter Notebooks. Developed by Data Scientists from Wandera to be used within both 
-research and python services use cases.
+
+Python client around the 1Password password manager cli for usage within python code and
+Jupyter Notebooks. Developed by Data Scientists from Wandera (a Jamf company).
 
 
 ## Installation
@@ -16,20 +16,33 @@ If you have issues with PyYaml or other distutils installed packages then use:
 pip install --ignore-installed 1password
 ```
 
-Both of these will install the `op` cli and python client. 
-This is currently fixed at `op` version 1.8.0 to ensure compatibility. If you wish to use a higher version of `op` you
+You are welcome to install and manage `op` yourself by visiting 
+https://support.1password.com/command-line-getting-started/
+
+The above commands will check `op` is present already and if not will install the best `op` cli it can work out plus 
+the python client itself. 
+This is currently fixed at `op` version 1.10.3 to ensure compatibility. If you wish to use a higher version of `op` you
 can by running `op update` in a terminal however note that we cannot ensure it will work with our client yet. 
 
 Mac OS users will be prompted with a seperate installation windows to ensure you have a signed version of `op` - make
 sure to check other desktops that the installer might pop up on. 
 
+### Optional pre-requisites
+#### base32
+This utility is used to create a unique guid for your device but this isn't a hard requirement from AgileBits 
+and so if you see `base32: command not found` an empty string will be used instead, 
+and the client will still work fully.
+
+If you really want to, you can make sure you have this installed by installing coreutils. Details per platform can
+be found here: https://command-not-found.com/base32
+
 ## Basic Usage
 Currently tested on Mac OS and Linux.
 
-On first usage users will be asked for both the enrolled email, secret key and master 
-password. There is also verification of your account domain and name. 
+On first usage users will be asked for both the enrolled email, secret key and password. 
+There is also verification of your account domain and name. 
 
-For all following usages you will only be asked for a master password.
+For all following usages you will only be asked for a password.
 
 You will be given 3 attempts and then pointed to reset password documentation or alternatively you can
 restart your kernel.
@@ -66,13 +79,14 @@ To be sure what you are using is of the right format
 - Account name: subdomain or account name that cli can use for multiple account holders e.g. example
 
 ## Contributing 
-The travis build will run with any PR or commit to master branch and then updates 
-the master branch with a new minor version for contributors to branch from.
+The GitHub action will run a full build, test and release on any push. 
+If this is to the main branch then this will release to public PyPi and bump the patch version.
 
-This means when contributing you should create a feature branch off of the master branch and without 
-manually bumping the version can focus on development. Merge back into master.
+For a major or minor branch update your new branch should include this new version and this should be verified by the 
+code owners.
 
-Later admins will bump major versions.
+In general, this means when contributing you should create a feature branch off of the main branch and without 
+manually bumping the version you can focus on development.
 
 ## CLI coverage
 Full op documentation can be found here: https://support.1password.com/command-line-reference/

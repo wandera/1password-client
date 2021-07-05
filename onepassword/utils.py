@@ -5,11 +5,9 @@ import pexpect
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 
-
 BLOCK_SIZE = 32  # Bytes
 master_password_regex = "Enter the password for [a-zA-Z0-9._%+-]+\\@[a-zA-Z0-9-]+\\.[a-zA-z]{2,4} at " \
-                        "[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-z]{2,4}"
-
+                        "[a-zA-Z0-9-.]+\\.1password+\\.[a-zA-z]{2,4}"
 
 def read_bash_return(cmd, single=True):
     process = os.popen(cmd)
@@ -186,9 +184,9 @@ class Encryption:
         return base64.b64encode(self.cipher.encrypt(pad(input_str, BLOCK_SIZE)))
 
 
-def bump_version():
+def bump_version(version_type="patch"):
     """
-    Only run in the project root directory, this is for travis to bump the version file only!
+    Only run in the project root directory, this is for github to bump the version file only!
 
     :return:
     """
@@ -197,8 +195,12 @@ def bump_version():
         version = version_file.read().strip()
 
     all_version = version.replace('"', "").split(".")
-    new_all_version = version.split(".")[:-1]
-    new_all_version.append(str(int(all_version[-1]) + 1))
+    if version_type == "patch":
+        new_all_version = version.split(".")[:-1]
+        new_all_version.append(str(int(all_version[-1]) + 1))
+    elif version_type == "minor":
+        new_all_version = [version.split(".")[0]]
+        new_all_version.extend([str(int(all_version[1]) + 1), '0'])
     new_line = '.'.join(new_all_version) + "\n"
     with open("{}/VERSION".format(__root__), "w") as fp:
         fp.write(new_line)

@@ -39,10 +39,10 @@ setup(
     long_description=readme(),
     long_description_content_type='text/markdown',
     install_requires=[
-        "wget>=3.2",
-        "pyyaml>=5.4",
-        "pycryptodome>=3.9.7",
-        "pexpect>=4.7.0"
+        "wget",
+        "pyyaml",
+        "pycryptodome",
+        "pexpect"
     ],
     python_requires='>=3.7',
     license="MIT",

@@ -1,0 +1,63 @@
+name: PyPi release
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build-n-publish:
+    name: PyPi release
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
+    - name: Install environment requirements
+      run: >-
+        python -m
+        pip install
+        -r
+        requirements.txt
+    - name: Run UTs
+      run: >-
+        python -m
+        unittest
+        discover
+        -v
+    - name: Install pypa/build
+      run: >-
+        python -m
+        pip install
+        build
+        --user
+    - name: Bump patch version
+      run: >-
+        python -c "from onepassword.utils import bump_version; bump_version(version_type='patch')"
+    - name: Build a binary wheel and a source tarball
+      run: >-
+        python -m
+        build
+        --sdist
+        --wheel
+        --outdir dist/
+        .
+    - name: Publish distribution 📦 to Test PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/
+    - name: Publish distribution 📦 to PyPI
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
+    - name: Add, commit and push version update
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git checkout main
+        git add .
+        git commit -m "[actions skip] GitHub bumping the version"
+        git push
