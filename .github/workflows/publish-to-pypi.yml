@@ -59,7 +59,6 @@ jobs:
         password: ${{ secrets.PYPI_API_TOKEN }}
     - name: Push version update
       run: >-
-        git checkout master
         git add .
         git commit -m "[actions skip] GitHub bumping the version"
         git push
