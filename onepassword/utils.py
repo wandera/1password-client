@@ -227,7 +227,7 @@ def get_device_uuid(bp):
     """
     try:
         device_uuid = bp.get_key_value("OP_DEVICE")[0]['OP_DEVICE'].strip('"')
-    except AttributeError:
+    except (AttributeError, ValueError):
         device_uuid = generate_uuid()
         bp.update_profile("OP_DEVICE", device_uuid)
 
