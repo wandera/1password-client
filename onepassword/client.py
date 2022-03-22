@@ -330,9 +330,9 @@ class OnePassword:
 
         """
         if isinstance(fields, list):
-            item = json.loads(read_bash_return("op get item {} --fields {}".format(uuid, ",".join(fields))))
+            item = json.loads(read_bash_return("op get item {} --fields \"{}\"".format(uuid, ",".join(fields))))
         elif isinstance(fields, str):
-            item = {fields: read_bash_return("op get item {} --fields {}".format(uuid, fields))}
+            item = {fields: read_bash_return("op get item {} --fields \"{}\"".format(uuid, fields))}
         else:
             item = json.loads(read_bash_return("op get item {}".format(uuid)))
         return item
