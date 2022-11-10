@@ -3,7 +3,11 @@
 [![CodeQL](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/wandera/1password-client/actions/workflows/codeql-analysis.yml)
 
 Python client around the 1Password password manager cli for usage within python code and
-Jupyter Notebooks. Developed by Data Scientists from Wandera (a Jamf company).
+Jupyter Notebooks. Developed by Data Scientists from Jamf.
+
+Warning: this client is for use with 1Password 7 and earlier. For 1Password 8 there is a different CLI2, which we have 
+not yet fully tested within this client. Feel free to attempt to use a higher version of the cli or this client with
+1Password 8 and submit PRs to fix issues.
 
 
 ## Installation
@@ -16,15 +20,17 @@ If you have issues with PyYaml or other distutils installed packages then use:
 pip install --ignore-installed 1password
 ```
 
-You are welcome to install and manage `op` yourself by visiting 
-https://support.1password.com/command-line-getting-started/
+You are welcome to install and manage `op` yourself by visiting
+[the CLI1 downloads page](https://app-updates.agilebits.com/product_history/CLI ) to download the version you require 
+and follow instructions for your platform.
 
 The above commands will check `op` is present already and if not will install the best `op` cli it can work out plus 
 the python client itself. 
-This is currently fixed at `op` version 1.10.3 to ensure compatibility. If you wish to use a higher version of `op` you
-can by running `op update` in a terminal however note that we cannot ensure it will work with our client yet. 
+This is currently fixed at `op` version 1.12.5 to ensure compatibility. If you wish to use a higher version of `op` you
+can by following [this guide](https://developer.1password.com/docs/cli/upgrade), 
+however note that we cannot ensure it will work with our client yet. 
 
-Mac OS users will be prompted with a seperate installation windows to ensure you have a signed version of `op` - make
+MacOS users will be prompted with a separate installation window to ensure you have a signed version of `op` - make
 sure to check other desktops that the installer might pop up on. 
 
 ### Optional pre-requisites
@@ -37,7 +43,7 @@ If you really want to, you can make sure you have this installed by installing c
 be found here: https://command-not-found.com/base32
 
 ## Basic Usage
-Currently tested on Mac OS and Linux.
+Currently tested on MacOS and Linux.
 
 On first usage users will be asked for both the enrolled email, secret key and password. 
 There is also verification of your account domain and name. 

@@ -2,14 +2,13 @@ import os
 import wget
 import zipfile
 import platform
-import shutil
 from subprocess import Popen, PIPE
 
-version_string = "v1.10.3"
+version_string = "v1.12.5"
 platform_links = {
     "Darwin": {
-        "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_darwin_amd64_{}.pkg".format(version_string,
-                                                                                                version_string),
+        "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_apple_universal_{}.pkg".format(version_string,
+                                                                                                   version_string),
         "download_loc": "/usr/local/bin/"
     },
     "FreeBSD": {
