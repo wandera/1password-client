@@ -4,57 +4,57 @@ import zipfile
 import platform
 from subprocess import Popen, PIPE
 
-version_string = "v1.12.5"
+version_string = "v2.17.0"
 platform_links = {
     "Darwin": {
-        "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_apple_universal_{}.pkg".format(version_string,
+        "x86_64": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_apple_universal_{}.pkg".format(version_string,
                                                                                                    version_string),
         "download_loc": "/usr/local/bin/"
     },
     "FreeBSD": {
-        "i386": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_386_{}.zip".format(version_string,
+        "i386": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_386_{}.zip".format(version_string,
                                                                                              version_string),
-        "i686": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_386_{}.zip".format(version_string,
+        "i686": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_386_{}.zip".format(version_string,
                                                                                              version_string),
-        "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_amd64_{}.zip".format(version_string,
+        "x86_64": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_amd64_{}.zip".format(version_string,
                                                                                                  version_string),
-        "arm": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
+        "arm": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
                                                                                             version_string),
-        "aarch64_be": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
+        "aarch64_be": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
                                                                                                    version_string),
-        "aarch64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
+        "aarch64": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
                                                                                                 version_string),
-        "armv8b": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
+        "armv8b": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
                                                                                                version_string),
-        "armv8l": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
+        "armv8l": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_freebsd_arm_{}.zip".format(version_string,
                                                                                                version_string),
         "download_loc": "/usr/local/bin/"
     },
     "Linux": {
-        "i386": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_386_{}.zip".format(version_string,
+        "i386": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_386_{}.zip".format(version_string,
                                                                                            version_string),
-        "i686": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_386_{}.zip".format(version_string,
+        "i686": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_386_{}.zip".format(version_string,
                                                                                            version_string),
-        "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_amd64_{}.zip".format(version_string,
+        "x86_64": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_amd64_{}.zip".format(version_string,
                                                                                                version_string),
-        "aarch64_be": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_arm_{}.zip".format(version_string,
+        "aarch64_be": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_arm_{}.zip".format(version_string,
                                                                                                  version_string),
-        "aarch64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_arm_{}.zip".format(version_string,
+        "aarch64": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_arm_{}.zip".format(version_string,
                                                                                               version_string),
-        "armv8b": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_arm_{}.zip".format(version_string,
+        "armv8b": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_arm_{}.zip".format(version_string,
                                                                                              version_string),
-        "armv8l": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_arm_{}.zip".format(version_string,
+        "armv8l": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_arm_{}.zip".format(version_string,
                                                                                              version_string),
-        "arm": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_linux_arm_{}.zip".format(version_string,
+        "arm": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_linux_arm_{}.zip".format(version_string,
                                                                                           version_string),
         "download_loc": "/usr/local/bin/"
     },
     "OpenBSD": {
-        "i386": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_openbsd_386_{}.zip".format(version_string,
+        "i386": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_openbsd_386_{}.zip".format(version_string,
                                                                                              version_string),
-        "i686": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_openbsd_386_{}.zip".format(version_string,
+        "i686": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_openbsd_386_{}.zip".format(version_string,
                                                                                              version_string),
-        "x86_64": "https://cache.agilebits.com/dist/1P/op/pkg/{}/op_openbsd_amd64_{}.zip".format(version_string,
+        "x86_64": "https://cache.agilebits.com/dist/1P/op2/pkg/{}/op_openbsd_amd64_{}.zip".format(version_string,
                                                                                                  version_string),
         "download_loc": "/usr/local/bin/"
     }

@@ -205,9 +205,9 @@ class OnePassword:
         """
         docid = self.get_uuid(docname, vault=vault)
         try:
-            return json.loads(read_bash_return("op get document {} --vault='{}'".format(docid, vault), single=False))
+            return json.loads(read_bash_return("op document get {} --vault='{}'".format(docid, vault), single=False))
         except JSONDecodeError:
-            yaml_attempt = yaml.safe_load(read_bash_return("op get document {} --vault='{}'".format(docid, vault),
+            yaml_attempt = yaml.safe_load(read_bash_return("op document get {} --vault='{}'".format(docid, vault),
                                                            single=False))
             if isinstance(yaml_attempt, dict):
                 return yaml_attempt
@@ -229,7 +229,7 @@ class OnePassword:
         :type vault: str
 
         """
-        cmd = "op create document {} --title={} --vault='{}'".format(filename, title, vault)
+        cmd = "op document create {} --title={} --vault='{}'".format(filename, title, vault)
         # [--tags=<tags>]
         response = read_bash_return(cmd)
         if len(response) == 0:
@@ -251,7 +251,7 @@ class OnePassword:
 
         """
         docid = self.get_uuid(title, vault=vault)
-        cmd = "op delete item {} --vault='{}'".format(docid, vault)
+        cmd = "op item delete {} --vault='{}'".format(docid, vault)
         response = read_bash_return(cmd)
         if len(response) > 0:
             self._signin()
@@ -298,7 +298,7 @@ class OnePassword:
         Helper function to list all vaults
 
         """
-        return read_bash_return('op list vaults')
+        return read_bash_return('op vault list')
 
     @staticmethod
     def list_items(vault="Private"):
@@ -311,7 +311,7 @@ class OnePassword:
         :returns: items :obj:`dict`: dict of all items
 
         """
-        items = json.loads(read_bash_return("op list items --vault='{}'".format(vault)))
+        items = json.loads(read_bash_return("op items list --vault='{}'".format(vault)))
         return items
 
     @staticmethod
@@ -330,9 +330,9 @@ class OnePassword:
 
         """
         if isinstance(fields, list):
-            item = json.loads(read_bash_return("op get item {} --fields {}".format(uuid, ",".join(fields))))
+            item = json.loads(read_bash_return("op item get {} --fields {}".format(uuid, ",".join(fields))))
         elif isinstance(fields, str):
-            item = {fields: read_bash_return("op get item {} --fields {}".format(uuid, fields))}
+            item = {fields: read_bash_return("op item get {} --fields {}".format(uuid, fields))}
         else:
-            item = json.loads(read_bash_return("op get item {}".format(uuid)))
+            item = json.loads(read_bash_return("op item get {}".format(uuid)))
         return item
