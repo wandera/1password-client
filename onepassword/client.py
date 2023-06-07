@@ -37,11 +37,11 @@ class OnePassword:
         if isinstance(account, str) and "OP_SESSION_{}".format(account) in os.environ:
             pass
         # Check first time: if true, full signin, else use shortened signin
-        elif self.check_not_first_time(bp):
+        elif self.check_not_first_time(bp):            
             self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,
                                                                                    master_password=password)
         else:
-            self.first_use()
+            self.first_use(account=domain)
 
     @staticmethod
     def check_not_first_time(bp):
@@ -53,13 +53,15 @@ class OnePassword:
                 line_checks.append(False)
         return any(line_checks)
 
-    def first_use(self):  # pragma: no cover
+    def first_use(self, account=None):  # pragma: no cover
         """
         Helper function to perform first time signin either with user interaction or not, depending on _init_
 
         """
         email_address = input("Please input your email address used for 1Password account: ")
-        account = domain_from_email(email_address)
+        if not account:
+            account = domain_from_email(email_address)
+
         signin_domain = account + ".1password.com"
         confirm_signin_domain = input("Is your 1Password domain: {} (y/n)? ".format(signin_domain))
         if confirm_signin_domain == "y":
@@ -99,7 +101,6 @@ class OnePassword:
         :return: encrypted_str, session_key - used by signin to know of existing login
 
         """
-
         password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key, master_password)
         tries = 1
         while tries < 3:
@@ -144,22 +145,10 @@ class OnePassword:
         :return: master_password, sess_key, domain, bp - all used by wrapper
 
         """
+        
         bp = BashProfile()
-        op_command = ""
-        if master_password is not None:
-            master_password = str.encode(master_password)
-        else:
-            if 'op' in locals():
-                initiated_class = locals()["op"]
-                if 'session_key' and 'encrypted_master_password' in initiated_class.__dict__:
-                    encrypt = Encryption(initiated_class.session_key)
-                    master_password = str.encode(encrypt.decode(initiated_class.encrypted_master_password))
-            else:
-                master_password = str.encode(getpass("Please input your 1Password master password: "))
-        if secret_key:
-            op_command = "op signin {} {} {} --raw --shorthand {}".format(domain, email, secret_key, account)
-        else:
-            if account is None:
+
+        if account is None:
                 try:
                     session_dict = bp.get_key_value("OP_SESSION", fuzzy=True)[0]  # list of dicts from BashProfile
                     account = list(session_dict.keys())[0].split("OP_SESSION_")[1]
@@ -168,8 +157,26 @@ class OnePassword:
                                     "wandera.1password.com: ")
                 except ValueError:
                     raise ValueError("First signin failed or not executed.")
-            op_command = "op signin {} --raw".format(account)
-        sess_key = _spawn_signin(op_command, master_password)
+                
+        if master_password is not None:
+            master_password = str.encode(master_password)
+        else:
+            if 'op' in locals():
+                
+                initiated_class = locals()["op"]
+                if 'session_key' and 'encrypted_master_password' in initiated_class.__dict__:
+                    encrypt = Encryption(initiated_class.session_key)
+                    master_password = str.encode(encrypt.decode(initiated_class.encrypted_master_password))
+            else:
+                master_password = str.encode(getpass("Please input your 1Password master password: "))
+                
+        if secret_key:
+            op_command = f"op account add --address {account} --email {email} --signin --raw"
+            sess_key = _spawn_signin(op_command, master_password, secret_key)
+        else:
+            op_command = f"op signin --account {account} --raw"
+            sess_key = _spawn_signin(op_command, master_password)
+
         return master_password, sess_key, domain, account, bp
 
     def get_uuid(self, docname, vault="Private"):  # pragma: no cover

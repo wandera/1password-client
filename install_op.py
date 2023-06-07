@@ -125,3 +125,9 @@ def install_chocolatey():
     Helper function for installing Windows package management requires that installation performed in admin role
     """
     pass
+
+
+if __name__ == '__main__':
+    # Run wizard if executed from terminal
+    install_op()
+    print()
