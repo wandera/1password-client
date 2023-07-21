@@ -29,7 +29,7 @@ class TestClient(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        print('--- Tear down TestUtilities ---')
+        print('--- Tear down TestClient ---')
         os.remove('.bash_profile')
 
     def setUp(self):
