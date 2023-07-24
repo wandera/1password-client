@@ -61,31 +61,22 @@ def get_session_key(process_resp_before):
         return new_line_response[0].split("\\r\\n")[1]
 
 
-def _spawn_signin(command, m_password):
+def _spawn_signin(command, m_password) -> str | bool:
     if command != "":
-        child = pexpect.spawn(command)
-        child.expect([master_password_regex, pexpect.EOF])
-        if child.isalive():
-            try:
-                child.sendline(m_password)
-            except OSError:
-                child.close()
-                child = pexpect.spawn(command)
-                child.expect([master_password_regex, pexpect.EOF])
-                child.sendline(m_password)
+        p = pexpect.spawn(command)
+        index = p.expect(master_password_regex)
+        if index == 0:
+            p.sendline(m_password)
+            index = p.expect([pexpect.EOF, "\(401\) Unauthorized"])
+            if index == 0:
+                sess_key = get_session_key(p.before)
+                p.close()
+                return sess_key
+            elif index == 1:
+                print("Input master password is not correct. Please try again")
+                return False
         else:
-            child.close()
-            child = pexpect.spawn(command)
-            child.expect([master_password_regex, pexpect.EOF])
-            child.sendline(m_password)
-        resp = child.expect(['Enter your six-digit authentication code:', pexpect.EOF])
-        if resp != 1:
-            auth_code = str(input("Please input your 1Password six-digit authentication code: "))
-            child.sendline(auth_code)
-            child.expect(pexpect.EOF)
-        sess_key = get_session_key(child.before)
-        child.close()
-        return sess_key
+            raise IOError("Onepassword command not valid")
     else:
         raise IOError("Spawn command not valid")
 

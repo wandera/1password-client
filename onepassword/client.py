@@ -10,7 +10,7 @@ from onepassword.exceptions import OnePasswordForgottenPassword
 
 class OnePassword:
     """
-    Class for integrating with a One Password password manager
+    Class for integrating with a OnePassword password manager
 
     :param domain: domain of 1password account (optional, default=None)
     :type domain: str
@@ -103,8 +103,7 @@ class OnePassword:
         password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key, master_password)
         tries = 1
         while tries < 3:
-            if "(ERROR)  401" in session_key:
-                print("That's not the right password, try again.")
+            if session_key is False:  # Not the right password, trying again
                 password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key,
                                                                           master_password)
                 tries += 1
@@ -157,7 +156,8 @@ class OnePassword:
             else:
                 master_password = str.encode(getpass("Please input your 1Password master password: "))
         if secret_key:
-            op_command = "op signin {} {} {} --raw --shorthand {}".format(domain, email, secret_key, account)
+            op_command = "op account add --address {} --email {} --secret-key {} --shorthand {} --signin --raw".format(
+                domain, email, secret_key, account)
         else:
             if account is None:
                 try:
@@ -168,7 +168,8 @@ class OnePassword:
                                     "wandera.1password.com: ")
                 except ValueError:
                     raise ValueError("First signin failed or not executed.")
-            op_command = "op signin {} --raw".format(account)
+
+            op_command = "op signin --account {} --raw".format(account)
         sess_key = _spawn_signin(op_command, master_password)
         return master_password, sess_key, domain, account, bp
 
@@ -182,7 +183,7 @@ class OnePassword:
         :param vault: vault the item is in (optional, default=Private)
         :type vault: str
 
-        :returns: uuid :obj:`str`: uuid of item or None if doesn't exist
+        :returns: uuid :obj:`str`: uuid of item or None if it doesn't exist
 
         """
         items = self.list_items(vault=vault)
@@ -200,7 +201,7 @@ class OnePassword:
         :param vault: vault the document is in (optional, default=Private)
         :type vault: str
 
-        :returns: :obj:`dict`: document or None if doesn't exist
+        :returns: :obj:`dict`: document or None if it doesn't exist
 
         """
         docid = self.get_uuid(docname, vault=vault)
