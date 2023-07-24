@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Any
 import yaml
 import pexpect
 from getpass import getpass
@@ -76,7 +77,7 @@ class ManualSignIn(SignIn):
         bp = BashProfile()
         os.environ["OP_DEVICE"] = get_device_uuid(bp)
         # reuse existing op session
-        if isinstance(account, str) and "OP_SESSION_{}".format(account) in os.environ:
+        if isinstance(account, str) and "{}_{}".format(self._env_account, account) in os.environ:
             pass
         # Check first time: if true, full signin, else use shortened signin
         elif self._check_not_first_time(bp):
@@ -124,7 +125,7 @@ class ManualSignIn(SignIn):
         bash profile, if not raises exception and points user to 1Password support.
 
         :param account: Shorthand account name for your 1Password account e.g. wandera from wandera.1password.com.
-        (Optional, default = None)
+            (Optional, default = None)
         :param domain: Full domain name of 1Password account e.g. wandera.1password.com (Optional, default=None)
         :param email: Email address of 1Password account (Optional, default=None)
         :param secret_key: Secret key of 1Password account (Optional, default=None)
@@ -150,28 +151,20 @@ class ManualSignIn(SignIn):
         raise OnePasswordForgottenPassword("You appear to have forgotten your password, visit: "
                                            "https://support.1password.com/forgot-master-password/")
 
-    @staticmethod
-    def signin(account=None, domain=None, email=None, secret_key=None, master_password=None):  # pragma: no cover
+    def signin(
+            self, account: str | None = None, domain: str | None = None, email: str | None = None,
+            secret_key: str | None = None, master_password: str | None = None
+    ) -> tuple[bytes | None, str | bool, str | None, str | None | Any, BashProfile]:  # pragma: no cover
         """
         Helper function to prepare sign in for the user
 
-        :param account: shorthand name for your 1password account e.g. wandera from wandera.1password.com (optional,
-        default=None)
-
-        :param domain: full domain name of 1password account e.g. wandera.1password.com (optional, default=None)
-        :type domain: str
-
-        :param email: email address of 1password account (optional, default=None)
-        :type email: str
-
-        :param secret_key: secret key of 1password account (optional, default=None)
-        :type secret_key: str
-
-        :param master_password: password for 1password account (optional, default=None)
-        :type master_password: str
-
+        :param account: Shorthand name for your 1Password account e.g. wandera from wandera.1password.com
+            (Optional, default=None)
+        :param domain: Full domain name of 1Password account e.g. wandera.1password.com (Optional, default=None)
+        :param email: Email address of 1Password account (Optional, default=None)
+        :param secret_key: Secret key of 1Password account (Optional, default=None)
+        :param master_password: Password for 1Password account (Optional, default=None)
         :return: master_password, sess_key, domain, bp - all used by wrapper
-
         """
         bp = BashProfile()
         op_command = ""
@@ -191,8 +184,8 @@ class ManualSignIn(SignIn):
         else:
             if account is None:
                 try:
-                    session_dict = bp.get_key_value("OP_SESSION", fuzzy=True)[0]  # list of dicts from BashProfile
-                    account = list(session_dict.keys())[0].split("OP_SESSION_")[1]
+                    session_dict = bp.get_key_value(self._env_session, fuzzy=True)[0]  # list of dicts from BashProfile
+                    account = list(session_dict.keys())[0].split(self._env_session + "_")[1]
                 except AttributeError:
                     account = input("Please input your 1Password account name e.g. wandera from "
                                     "wandera.1password.com: ")
