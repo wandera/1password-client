@@ -8,50 +8,68 @@ from onepassword.utils import read_bash_return, domain_from_email, Encryption, B
 from onepassword.exceptions import OnePasswordForgottenPassword
 
 
-class OnePassword:
-    """
-    Class for integrating with a OnePassword password manager
+class SignIn:
+    def get_account(self, bash_profile: BashProfile | None = None, key: str | None = None) -> str:
+        if bash_profile is None:
+            return self._input_account()
+        elif key is not None and bash_profile is not None:
+            return self._get_account_bash(bash_profile, key)
+        else:
+            raise AttributeError("'key' arg required to search 'bash_profile' for account name.")
 
-    :param domain: domain of 1password account (optional, default=None)
-    :type domain: str
+    @staticmethod
+    def _input_account() -> str:
+        account = input("Please input your 1Password account name e.g. wandera from wandera.1password.com: ")
+        return account
 
-    :param email: email address of 1password account (optional, default=None)
-    :type email: str
+    def _get_account_bash(self, bash_profile: BashProfile, key: str) -> str:
+        try:
+            session_dict = bash_profile.get_key_value(key, fuzzy=True)[0]  # list of dicts from BashProfile
+            account = list(session_dict.keys())[0].split(key + "_")[1]
+        except AttributeError:
+            account = self._input_account()
+        except ValueError:
+            raise ValueError("First signin failed or not executed.")
+        return account
 
-    :param secret: secret key of 1password account (optional, default=None)
-    :type secret: str
+    @staticmethod
+    def get_domain() -> str:
+        domain = input("Please input your 1Password domain in the format <something>.1password.com: ")
+        return domain
 
-    :param password: password of 1password account (optional, default=None)
-    :type password: str
+    @staticmethod
+    def _update_bash_account(account: str, bash_profile: BashProfile, key: str, value: str) -> None:
+        os.environ["{}_{}".format(key, account)] = value
+        bash_profile.update_profile("{}_{}".format(key, account), value)
 
-    :returns OnePassword: :obj:`instance`: OnePassword instance to allow code or user to manage credentials.
+    def signin(self):
+        pass
 
-    """
-    def __init__(self, account=None, domain=None, email=None, secret=None, password=None):  # pragma: no cover
-        self.signin_domain = domain
-        self.email_address = email
-        self.secret_key = secret
+
+class ManualSignIn(SignIn):
+    _env_variable = "OP_SESSION"
+
+    def __init__(self, account: str | None = None, password: str | None = None) -> None:
+        # pragma: no cover
         bp = BashProfile()
         os.environ["OP_DEVICE"] = get_device_uuid(bp)
         # reuse existing op session
         if isinstance(account, str) and "OP_SESSION_{}".format(account) in os.environ:
             pass
         # Check first time: if true, full signin, else use shortened signin
-        elif self.check_not_first_time(bp):
-            self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,
-                                                                                   master_password=password)
+        elif self._check_not_first_time(bp):
+            self.encrypted_master_password, self.session_key = self.signin_wrapper(
+                account=account,
+                master_password=password
+            )
         else:
             self.first_use()
 
-    @staticmethod
-    def check_not_first_time(bp):
-        line_checks = []
+    def _check_not_first_time(self, bp: BashProfile) -> bool:
         for line in bp.profile_lines:
-            if "OP_SESSION" in line:
-                line_checks.append(True)
-            else:
-                line_checks.append(False)
-        return any(line_checks)
+            if self._env_variable in line:
+                return True
+            return False
 
     def first_use(self):  # pragma: no cover
         """
@@ -65,13 +83,13 @@ class OnePassword:
         if confirm_signin_domain == "y":
             pass
         else:
-            signin_domain = input("Please input your 1Password domain in the format <something>.1password.com: ")
+            signin_domain = self.get_domain()
 
         confirm_account = input("Is your 1Password account name: {} (y/n)? ".format(account))
         if confirm_account == "y":
             pass
         else:
-            account = input("Please input your 1Password account name e.g. wandera from wandera.1password.com: ")
+            account = self.get_account()
         secret_key = getpass("Please input your 1Password secret key: ")
         self.signin_wrapper(account, signin_domain, email_address, secret_key)
 
@@ -100,12 +118,12 @@ class OnePassword:
 
         """
 
-        password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key, master_password)
+        password, session_key, domain, account, bp = self.signin(account, domain, email, secret_key, master_password)
         tries = 1
         while tries < 3:
             if session_key is False:  # Not the right password, trying again
-                password, session_key, domain, account, bp = self._signin(account, domain, email, secret_key,
-                                                                          master_password)
+                password, session_key, domain, account, bp = self.signin(
+                    account, domain, email, secret_key, master_password)
                 tries += 1
                 pass
             else:
@@ -121,7 +139,7 @@ class OnePassword:
                                            "https://support.1password.com/forgot-master-password/")
 
     @staticmethod
-    def _signin(account=None, domain=None, email=None, secret_key=None, master_password=None):  # pragma: no cover
+    def signin(account=None, domain=None, email=None, secret_key=None, master_password=None):  # pragma: no cover
         """
         Helper function to prepare sign in for the user
 
@@ -173,6 +191,48 @@ class OnePassword:
         sess_key = _spawn_signin(op_command, master_password)
         return master_password, sess_key, domain, account, bp
 
+
+class OnePassword:
+    """
+    Class for integrating with a OnePassword password manager
+
+    :param domain: domain of 1password account (optional, default=None)
+    :type domain: str
+
+    :param email: email address of 1password account (optional, default=None)
+    :type email: str
+
+    :param secret: secret key of 1password account (optional, default=None)
+    :type secret: str
+
+    :param password: password of 1password account (optional, default=None)
+    :type password: str
+
+    :returns OnePassword: :obj:`instance`: OnePassword instance to allow code or user to manage credentials.
+
+    """
+    def __init__(self, account=None, password=None):  # pragma: no cover
+
+        self.signin_strategy = ManualSignIn(account, password)
+
+
+        # self.signin_domain = domain
+        # self.email_address = email
+        # self.secret_key = secret
+        # bp = BashProfile()
+        # os.environ["OP_DEVICE"] = get_device_uuid(bp)
+        # # reuse existing op session
+        # if isinstance(account, str) and "OP_SESSION_{}".format(account) in os.environ:
+        #     pass
+        # # Check first time: if true, full signin, else use shortened signin
+        # elif self.check_not_first_time(bp):
+        #     self.encrypted_master_password, self.session_key = self.signin_wrapper(account=account,
+        #                                                                            master_password=password)
+        # else:
+        #     self.first_use()
+
+
+
     def get_uuid(self, docname, vault="Private"):  # pragma: no cover
         """
         Helper function to get the uuid for an item
@@ -188,8 +248,8 @@ class OnePassword:
         """
         items = self.list_items(vault=vault)
         for t in items:
-            if t['overview']['title'] == docname:
-                return t['uuid']
+            if t["title"] == docname:
+                return t["id"]
 
     def get_document(self, docname, vault="Private"):  # pragma: no cover
         """
@@ -206,9 +266,10 @@ class OnePassword:
         """
         docid = self.get_uuid(docname, vault=vault)
         try:
-            return json.loads(read_bash_return("op get document {} --vault='{}'".format(docid, vault), single=False))
+            return json.loads(
+                read_bash_return("op document get {} --vault='{}' --format=Json".format(docid, vault), single=False))
         except JSONDecodeError:
-            yaml_attempt = yaml.safe_load(read_bash_return("op get document {} --vault='{}'".format(docid, vault),
+            yaml_attempt = yaml.safe_load(read_bash_return("op document get {} --vault='{}'".format(docid, vault),
                                                            single=False))
             if isinstance(yaml_attempt, dict):
                 return yaml_attempt
@@ -230,11 +291,11 @@ class OnePassword:
         :type vault: str
 
         """
-        cmd = "op create document {} --title={} --vault='{}'".format(filename, title, vault)
+        cmd = "op document create {} --title={} --vault='{}'".format(filename, title, vault)
         # [--tags=<tags>]
         response = read_bash_return(cmd)
         if len(response) == 0:
-            self._signin()
+            self.signin_strategy.signin()
             read_bash_return(cmd)
             # self.signout()
         # else:
@@ -252,10 +313,10 @@ class OnePassword:
 
         """
         docid = self.get_uuid(title, vault=vault)
-        cmd = "op delete item {} --vault='{}'".format(docid, vault)
+        cmd = "op item delete {} --vault='{}'".format(docid, vault)
         response = read_bash_return(cmd)
         if len(response) > 0:
-            self._signin()
+            self.signin_strategy.signin()
             read_bash_return(cmd)
             # self.signout()
         # else:
@@ -291,7 +352,7 @@ class OnePassword:
         Helper function to sign out of 1pass
 
         """
-        read_bash_return('op signout')
+        read_bash_return("op signout")
 
     @staticmethod
     def list_vaults():
@@ -299,7 +360,7 @@ class OnePassword:
         Helper function to list all vaults
 
         """
-        return read_bash_return('op list vaults')
+        return json.loads(read_bash_return("op vault list --format=json", single=False))
 
     @staticmethod
     def list_items(vault="Private"):
@@ -312,7 +373,7 @@ class OnePassword:
         :returns: items :obj:`dict`: dict of all items
 
         """
-        items = json.loads(read_bash_return("op list items --vault='{}'".format(vault)))
+        items = json.loads(read_bash_return("op items list --vault='{}' --format=json".format(vault), single=False))
         return items
 
     @staticmethod
@@ -331,9 +392,16 @@ class OnePassword:
 
         """
         if isinstance(fields, list):
-            item = json.loads(read_bash_return("op get item {} --fields {}".format(uuid, ",".join(fields))))
+            items = read_bash_return(
+                "op item get {} --fields label={}".format(uuid, ",label=".join(fields)),
+                single=False
+            ).rstrip('\n')
+            item = dict(zip(fields, items.split(",")))
         elif isinstance(fields, str):
-            item = {fields: read_bash_return("op get item {} --fields {}".format(uuid, fields))}
+            item = {
+                fields: read_bash_return(
+                    "op item get {} --fields label={}".format(uuid, fields), single=False).rstrip('\n')
+            }
         else:
-            item = json.loads(read_bash_return("op get item {}".format(uuid)))
+            item = json.loads(read_bash_return("op item get {} --format=json".format(uuid), single=False))
         return item

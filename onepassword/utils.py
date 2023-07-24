@@ -54,11 +54,11 @@ def domain_from_email(address):
 
 
 def get_session_key(process_resp_before):
-    new_line_response = [x for x in str(process_resp_before).split(" ") if "\\r\\n" in x]
+    new_line_response = [x for x in process_resp_before.decode("utf-8").split("\n") if "\r" not in x]
     if len(new_line_response) != 1:
         raise IndexError("Session keys not parsed correctly from response: {}.".format(process_resp_before))
     else:
-        return new_line_response[0].split("\\r\\n")[1]
+        return new_line_response[0]
 
 
 def _spawn_signin(command, m_password) -> str | bool:
