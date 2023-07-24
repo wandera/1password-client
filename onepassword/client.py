@@ -271,7 +271,7 @@ class OnePassword:
             if t["title"] == docname:
                 return t["id"]
 
-    def get_document(self, docname: str, vault: str = "Private") -> dict:  # pragma: no cover
+    def get_document(self, docname: str, vault: str = "Private") -> dict | None:  # pragma: no cover
         """
         Helper function to get a document
 
