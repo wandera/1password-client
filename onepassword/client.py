@@ -1,8 +1,8 @@
 import os
 import json
-from typing import Any
 import yaml
-import pexpect
+import subprocess
+from typing import Any
 from getpass import getpass
 from json import JSONDecodeError
 from onepassword.utils import read_bash_return, domain_from_email, Encryption, BashProfile, get_device_uuid, \
@@ -210,13 +210,9 @@ class AppSignIn(SignIn):
 
     @staticmethod
     def _do_signin(account: str) -> None:
-        try:
-            pexpect.spawn(f"op signin --account {account}")
-        except OSError:
-            raise AssertionError(
-                "Unable to sign in to 1Password using the 1Password app. Please ensure this has been setup correctly, "
-                "see: https://developer.1password.com/docs/cli/app-integration"
-            )
+        r = subprocess.run("op signin --account {}".format(account), shell=True, capture_output=True, text=True)
+        if r.returncode != 0:
+            raise ConnectionError(r.stderr.rstrip("\n"))
 
     def signin(self, account: str | None = None) -> None:
         """
