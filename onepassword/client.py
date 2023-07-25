@@ -214,11 +214,20 @@ class AppSignIn(SignIn):
     def _do_signin(account: str) -> CompletedProcess[Any] | CompletedProcess[str]:
         return subprocess.run("op signin --account {}".format(account), shell=True, capture_output=True, text=True)
 
+    @staticmethod
+    def _do_open_app(default_error: str) -> CompletedProcess[Any] | CompletedProcess[str]:
+        if platform.system() == "Darwin":
+            return subprocess.run("open -a 1Password.app", shell=True)
+        elif platform.system() == "Linux":
+            return subprocess.run("1password", shell=True)
+        else:
+            raise ConnectionError(default_error)
+
     def _signin_wrapper(self, account: str) -> None:
         r = self._do_signin(account)
         if r.returncode != 0:
-            if "please unlock it in the 1Password app" in r.stderr and platform.system() == "Darwin":
-                open_app = subprocess.run("open -a 1Password.app", shell=True)
+            if "please unlock it in the 1Password app" in r.stderr:
+                open_app = self._do_open_app(r.stderr.rstrip("\n"))
                 if open_app.returncode == 0:
                     sign_in = self._do_signin(account)
                     if sign_in.returncode != 0:
