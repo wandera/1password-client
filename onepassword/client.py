@@ -1,7 +1,9 @@
 import os
 import json
+import platform
 import yaml
 import subprocess
+from subprocess import CompletedProcess
 from typing import Any
 from getpass import getpass
 from json import JSONDecodeError
@@ -209,9 +211,20 @@ class AppSignIn(SignIn):
         self.signin(account)
 
     @staticmethod
-    def _do_signin(account: str) -> None:
-        r = subprocess.run("op signin --account {}".format(account), shell=True, capture_output=True, text=True)
+    def _do_signin(account: str) -> CompletedProcess[Any] | CompletedProcess[str]:
+        return subprocess.run("op signin --account {}".format(account), shell=True, capture_output=True, text=True)
+
+    def _signin_wrapper(self, account: str) -> None:
+        r = self._do_signin(account)
         if r.returncode != 0:
+            if "please unlock it in the 1Password app" in r.stderr and platform.system() == "Darwin":
+                open_app = subprocess.run("open -a 1Password.app", shell=True)
+                if open_app.returncode == 0:
+                    sign_in = self._do_signin(account)
+                    if sign_in.returncode != 0:
+                        raise ConnectionError(sign_in.stderr.rstrip("\n"))
+                else:
+                    raise ConnectionError(r.stderr.rstrip("\n"))
             raise ConnectionError(r.stderr.rstrip("\n"))
 
     def signin(self, account: str | None = None) -> None:
@@ -224,7 +237,7 @@ class AppSignIn(SignIn):
         bash_profile = BashProfile()
         if account is None:
             account = self.get_account(bash_profile)
-        self._do_signin(account)
+        self._signin_wrapper(account)
         self._update_bash_account(account, bash_profile)
 
 
