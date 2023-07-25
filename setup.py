@@ -8,17 +8,18 @@ class PostDevelopCommand(develop):
     """Post-installation for development mode."""
     def run(self):
         develop.run(self)
-        from install_op import install_op
-        install_op()
+        from install_op import CliInstaller
+        install_cli = CliInstaller()
+        install_cli.install()
 
 
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
         install.run(self)
-        from install_op import install_op
-        install_op()
-
+        from install_op import CliInstaller
+        install_cli = CliInstaller()
+        install_cli.install()
 
 def readme():
     with open('README.md') as f:
