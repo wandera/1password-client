@@ -9,8 +9,8 @@ Jupyter Notebooks. Developed by Data Scientists from Jamf.
 There are some of the pre-requisites that are needed to use the library. We automatically install the cli for Mac and
 Linux users when installing the library. Windows users see below for help.
 
-- 1Password App: 8
-- 1Password cli: 2.19.0
+- 1Password App: 8+
+- 1Password cli: 2+
 - Python: 3.10+
 
 ## Operating systems
@@ -18,16 +18,15 @@ The library is split into two parts: installation and client in which we are slo
 systems as possible the following table should ensure users understand what this library can and can't do at time of 
 install.
 
-|                 | MacOS | Linux | Windows             |
-|-----------------|-------|-------|---------------------|
-| Fully supported | Y     | Y     | N                   |
-| CLI install     | Y     | Y     | Y - via user script |
-| SSO login       | Y     | Y     | Not tested          |
-| Login via App   | Y     | Y     | Not tested          |
-| Biometrics auth | Y     | Y     | Not tested          |
-| Password auth   | Y     | Y     | Not tested          |
-| CLI client      | Y     | Y     | Not tested          |
-|-------------------------------------------------------|
+|                 | MacOS | Linux | Windows              |
+|-----------------|-------|-------|----------------------|
+| Fully supported | Y     | Y     | N                    |
+| CLI install     | Y     | Y     | Y - not fully tested |
+| SSO login       | Y     | Y     | Not tested           |
+| Login via App   | Y     | Y     | Not tested           |
+| Biometrics auth | Y     | Y     | Not tested           |
+| Password auth   | Y     | Y     | Not tested           |
+| CLI client      | Y     | Y     | Not tested           |
 
 ## Installation
 ```bash

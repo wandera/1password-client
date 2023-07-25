@@ -83,10 +83,16 @@ def mkdirpy(directory):
 
 class CliInstaller:  # pragma: no cover
     def __init__(self):
-        system = str(platform.system())
+        self.system = str(platform.system())
         machine = str(platform.machine())
-        self.link = platform_links[system][machine]
-        self.download_location = platform_links[system]["download_loc"]
+        self.link = platform_links[self.system][machine]
+        self.download_location = platform_links[self.system]["download_loc"]
+
+    def install(self):
+        if self.system in platform_links.keys():
+            self.install_linux_mac()
+        else:
+            self.install_windows()
 
     def check_install_required(self):  # pragma: no cover
         """
@@ -105,7 +111,7 @@ class CliInstaller:  # pragma: no cover
                 existing_location = read_bash_return("which op")
                 return True, existing_location
 
-    def install_op(self):
+    def install_linux_mac(self):
         """
             Helper function to download, unzip, install and chmod op cli files
             """
@@ -142,15 +148,8 @@ class CliInstaller:  # pragma: no cover
         os.system(powershell)
 
 
-def install_chocolatey():
-    """
-    Helper function for installing Windows package management requires that installation performed in admin role
-    """
-    pass
-
-
 if __name__ == '__main__':
     # Run wizard if executed from terminal
     install_cli = CliInstaller()
-    install_cli.install_op()
+    install_cli.install()
     print()

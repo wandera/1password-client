@@ -10,7 +10,7 @@ class PostDevelopCommand(develop):
         develop.run(self)
         from install_op import CliInstaller
         install_cli = CliInstaller()
-        install_cli.install_op()
+        install_cli.install()
 
 
 class PostInstallCommand(install):
@@ -19,8 +19,7 @@ class PostInstallCommand(install):
         install.run(self)
         from install_op import CliInstaller
         install_cli = CliInstaller()
-        install_cli.install_op()
-
+        install_cli.install()
 
 def readme():
     with open('README.md') as f:
