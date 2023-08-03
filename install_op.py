@@ -92,7 +92,7 @@ class CliInstaller:  # pragma: no cover
         if self.system in platform_links.keys():
             self.install_linux_mac()
         else:
-            self.install_windows()
+            raise OSError("Operating system not supported")
 
     def check_install_required(self):  # pragma: no cover
         """
@@ -140,12 +140,6 @@ class CliInstaller:  # pragma: no cover
                 Popen(["open", os.path.join(local_bin, op_file)], stdin=PIPE, stdout=PIPE)  # pragma: no cover
         else:
             print("op already installed, with supported version.")
-
-    @staticmethod
-    def install_windows(self):
-        powershell = "powershell.exe -ExecutionPolicy Bypass -File .\InstallWindows.ps1 -opversionstr {}"\
-            .format(version_string)
-        os.system(powershell)
 
 
 if __name__ == '__main__':

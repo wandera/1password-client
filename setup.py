@@ -35,7 +35,7 @@ setup(
     name="1password",
     version=version,
     author="David Pryce",
-    author_email="david.pryce@wandera.com",
+    author_email="david.prycecompson@jamf.com",
     description="A Python client and wrapper around the 1Password CLI.",
     long_description=readme(),
     long_description_content_type='text/markdown',

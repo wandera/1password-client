@@ -18,15 +18,15 @@ The library is split into two parts: installation and client in which we are slo
 systems as possible the following table should ensure users understand what this library can and can't do at time of 
 install.
 
-|                 | MacOS | Linux | Windows              |
-|-----------------|-------|-------|----------------------|
-| Fully supported | Y     | Y     | N                    |
-| CLI install     | Y     | Y     | Y - not fully tested |
-| SSO login       | Y     | Y     | Not tested           |
-| Login via App   | Y     | Y     | Not tested           |
-| Biometrics auth | Y     | Y     | Not tested           |
-| Password auth   | Y     | Y     | Not tested           |
-| CLI client      | Y     | Y     | Not tested           |
+|                 | MacOS | Linux | 
+|-----------------|-------|-------|
+| Fully supported | Y     | Y     | 
+| CLI install     | Y     | Y     | 
+| SSO login       | Y     | Y     | 
+| Login via App   | Y     | Y     | 
+| Biometrics auth | Y     | Y     | 
+| Password auth   | Y     | Y     | 
+| CLI client      | Y     | Y     | 
 
 ## Installation
 ```bash
@@ -51,11 +51,6 @@ however note that we cannot ensure it will work with our client yet.
 MacOS users will be prompted with a separate installation window to ensure you have a signed version of `op` - make
 sure to check other desktops that the installer might pop up on. 
 
-Windows users we suggest you install the CLI yourselves using the powershell script provided for the supported `op` 
-version running as administrator:
-```bash
-powershell.exe -ExecutionPolicy Bypass -File .\InstallWindows.ps1 -opversionstr v<input supported cli version>
-```
 
 ### Optional pre-requisites
 #### base32
@@ -67,8 +62,6 @@ If you really want to, you can make sure you have this installed by installing c
 be found here: https://command-not-found.com/base32
 
 ## Basic Usage
-Currently fully tested on MacOS and Linux. We are working to extend the client fully to Windows.
-
 Since v2 of the cli it is advised to connect your CLI to the local app installed on the device, thus removing the need
 for secret keys and passwords in the terminal or shell. Read here on how to do that: 
 https://developer.1password.com/docs/cli/get-started#step-2-turn-on-the-1password-desktop-app-integration
