@@ -5,10 +5,28 @@
 Python client around the 1Password password manager cli for usage within python code and
 Jupyter Notebooks. Developed by Data Scientists from Jamf.
 
-Warning: this client is for use with 1Password 7 and earlier. For 1Password 8 there is a different CLI2, which we have 
-not yet fully tested within this client. Feel free to attempt to use a higher version of the cli or this client with
-1Password 8 and submit PRs to fix issues.
+## Supported versions
+There are some of the pre-requisites that are needed to use the library. We automatically install the cli for Mac and
+Linux users when installing the library. Windows users see below for help.
 
+- 1Password App: 8+
+- 1Password cli: 2+
+- Python: 3.10+
+
+## Operating systems
+The library is split into two parts: installation and client in which we are slowly updating to cover as many operating
+systems as possible the following table should ensure users understand what this library can and can't do at time of 
+install.
+
+|                 | MacOS | Linux | 
+|-----------------|-------|-------|
+| Fully supported | Y     | Y     | 
+| CLI install     | Y     | Y     | 
+| SSO login       | Y     | Y     | 
+| Login via App   | Y     | Y     | 
+| Biometrics auth | Y     | Y     | 
+| Password auth   | Y     | Y     | 
+| CLI client      | Y     | Y     | 
 
 ## Installation
 ```bash
@@ -22,16 +40,17 @@ pip install --ignore-installed 1password
 
 You are welcome to install and manage `op` yourself by visiting
 [the CLI1 downloads page](https://app-updates.agilebits.com/product_history/CLI ) to download the version you require 
-and follow instructions for your platform.
+and follow instructions for your platform as long as it's major version 2.
 
-The above commands will check `op` is present already and if not will install the best `op` cli it can work out plus 
-the python client itself. 
+The above commands pip commands will check `op` is present already and if not will install the supported `op` cli 
+plus the python client itself. 
 This is currently fixed at `op` version 1.12.5 to ensure compatibility. If you wish to use a higher version of `op` you
 can by following [this guide](https://developer.1password.com/docs/cli/upgrade), 
 however note that we cannot ensure it will work with our client yet. 
 
 MacOS users will be prompted with a separate installation window to ensure you have a signed version of `op` - make
 sure to check other desktops that the installer might pop up on. 
+
 
 ### Optional pre-requisites
 #### base32
@@ -43,8 +62,20 @@ If you really want to, you can make sure you have this installed by installing c
 be found here: https://command-not-found.com/base32
 
 ## Basic Usage
-Currently tested on MacOS and Linux.
+Since v2 of the cli it is advised to connect your CLI to the local app installed on the device, thus removing the need
+for secret keys and passwords in the terminal or shell. Read here on how to do that: 
+https://developer.1password.com/docs/cli/get-started#step-2-turn-on-the-1password-desktop-app-integration
 
+An added extra for Mac users is that you can also enable TouchID for the app and by linking your cli with the app you 
+will get biometric login for both. 
+
+Once this is done any initial usage of the cli, and our client will request you to authenticate either via the app or 
+using your biometrics and then you can continue.
+
+We are sure there are use cases where the app cannot be linked and hence a password etc is till required so this 
+functionality is still present from our v1 implementation and can be described below
+
+### Password authentication
 On first usage users will be asked for both the enrolled email, secret key and password. 
 There is also verification of your account domain and name. 
 
@@ -75,6 +106,7 @@ op.get_item(uuid="example", fields="username")
 op.get_item(uuid="example", fields=["username", "password"])
 
 ```
+## 
 
 ### Input formats
 To be sure what you are using is of the right format
@@ -177,4 +209,3 @@ This is what still needs developing due to new functionality being released:
     - reactivate
     - remove
     - suspend
-- Use the new CLI update method
