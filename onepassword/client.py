@@ -291,18 +291,31 @@ class OnePassword:
         :returns: Document or None if it doesn't exist
 
         """
-        docid = self.get_uuid(docname, vault=vault)
+        document_str = self.get_document_str(docname, vault)
         try:
-            return json.loads(
-                read_bash_return("op document get {} --vault='{}' --format=Json".format(docid, vault), single=False))
+            return json.loads(document_str)
         except JSONDecodeError:
-            yaml_attempt = yaml.safe_load(read_bash_return("op document get {} --vault='{}'".format(docid, vault),
-                                                           single=False))
+            yaml_attempt = yaml.safe_load(document_str)
             if isinstance(yaml_attempt, dict):
                 return yaml_attempt
             else:
                 print("File {} does not exist in 1Password vault: {}".format(docname, vault))
                 return None
+
+    def get_document_str(self, docname: str, vault: str = "Private") -> str:  # pragma: no cover
+        """
+        Helper function to get a document
+
+        :param docname: Title of the document (not it's filename)
+        :param vault: Vault the document is in (Optional, default=Private)
+
+        :returns: Document
+        :rtype: str
+
+        """
+        docid = self.get_uuid(docname, vault=vault)
+        document = read_bash_return("op document get {} --vault='{}'".format(docid, vault), single=False)
+        return document
 
     def put_document(self, filename: str, title: str, vault: str = "Private") -> None:  # pragma: no cover
         """
