@@ -1,12 +1,11 @@
-name: PyPi release
+name: PyPi build and release
 
 on: [push, workflow_dispatch]
 
 jobs:
-  build-n-publish:
-    name: PyPi release
+  build:
+    name: PyPi build
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -41,17 +40,35 @@ jobs:
         --sdist
         --outdir dist/
         .
-    - name: Publish distribution 📦 to Test PyPI
-      if: ${{ github.ref != 'refs/heads/main' }}
-      uses: pypa/gh-action-pypi-publish@master
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository_url: https://test.pypi.org/legacy/
+        name: source-code
+        path: dist/
+  pypi-publish:
+    name: Pypi release
+    runs-on: ubuntu-latest
+    permissions:
+        # IMPORTANT: this permission is mandatory for trusted publishing
+        id-token: write
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+      with:
+        name: source-code
+        path: dist
+    - name: Display downloaded files
+      run: ls -R
+      working-directory: dist
+    - name: Publish distribution 📦 to Test PyPI
+      # Specifying a GitHub environment is optional, but strongly encouraged
+      if: ${{ github.ref != 'refs/heads/main' }}
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: ${{ github.ref == 'refs/heads/main' }}
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+      uses: pypa/gh-action-pypi-publish@release/v1
     - name: Add, commit and push version update
       if: ${{ github.ref == 'refs/heads/main' }}
       run: |

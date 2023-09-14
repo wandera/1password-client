@@ -291,18 +291,36 @@ class OnePassword:
         :returns: Document or None if it doesn't exist
 
         """
+        document_str = self.get_document_str(docname, vault)
+        if isinstance(document_str, str):
+            try:
+                return json.loads(document_str)
+            except JSONDecodeError:
+                yaml_attempt = yaml.safe_load(document_str)
+                if isinstance(yaml_attempt, dict):
+                    return yaml_attempt
+                else:
+                    print("File {} does not exist in 1Password vault: {}".format(docname, vault))
+                    return None
+        else:
+            return None
+
+    def get_document_str(self, docname: str, vault: str = "Private") -> str | None:  # pragma: no cover
+        """
+        Helper function to get a document
+
+        :param docname: Title of the document (not it's filename)
+        :param vault: Vault the document is in (Optional, default=Private)
+
+        :returns: Document or None is non existant
+        :rtype: str | None
+
+        """
         docid = self.get_uuid(docname, vault=vault)
-        try:
-            return json.loads(
-                read_bash_return("op document get {} --vault='{}' --format=Json".format(docid, vault), single=False))
-        except JSONDecodeError:
-            yaml_attempt = yaml.safe_load(read_bash_return("op document get {} --vault='{}'".format(docid, vault),
-                                                           single=False))
-            if isinstance(yaml_attempt, dict):
-                return yaml_attempt
-            else:
-                print("File {} does not exist in 1Password vault: {}".format(docname, vault))
-                return None
+        document = None
+        if isinstance(docid, str):
+            document = read_bash_return("op document get {} --vault='{}'".format(docid, vault), single=False)
+        return document
 
     def put_document(self, filename: str, title: str, vault: str = "Private") -> None:  # pragma: no cover
         """
