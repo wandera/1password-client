@@ -1,4 +1,4 @@
-name: PyPi release
+name: PyPi build and release
 
 on: [push, workflow_dispatch]
 
@@ -41,6 +41,7 @@ jobs:
         --outdir dist/
         .
   pypi-publish:
+    runs-on: ubuntu-latest
     permissions:
         # IMPORTANT: this permission is mandatory for trusted publishing
         id-token: write
