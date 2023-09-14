@@ -4,7 +4,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    name: PyPi release
+    name: PyPi build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -41,6 +41,7 @@ jobs:
         --outdir dist/
         .
   pypi-publish:
+    name: Pypi release
     runs-on: ubuntu-latest
     permissions:
         # IMPORTANT: this permission is mandatory for trusted publishing
