@@ -48,13 +48,11 @@ jobs:
     - name: Publish distribution 📦 to Test PyPI
       # Specifying a GitHub environment is optional, but strongly encouraged
       if: ${{ github.ref != 'refs/heads/main' }}
-      environment: test
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: ${{ github.ref == 'refs/heads/main' }}
-      environment: release
       uses: pypa/gh-action-pypi-publish@release/v1
     - name: Add, commit and push version update
       if: ${{ github.ref == 'refs/heads/main' }}
