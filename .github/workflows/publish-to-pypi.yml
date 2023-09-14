@@ -56,8 +56,10 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: source-code
+        path: dist
     - name: Display downloaded files
       run: ls -R
+      working-directory: dist
     - name: Publish distribution 📦 to Test PyPI
       # Specifying a GitHub environment is optional, but strongly encouraged
       if: ${{ github.ref != 'refs/heads/main' }}
