@@ -40,6 +40,10 @@ jobs:
         --sdist
         --outdir dist/
         .
+      uses: actions/upload-artifact@v3
+      with:
+        name: source-code
+        path: dist/
   pypi-publish:
     name: Pypi release
     runs-on: ubuntu-latest
@@ -47,6 +51,12 @@ jobs:
         # IMPORTANT: this permission is mandatory for trusted publishing
         id-token: write
     steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+      with:
+        name: source-code
+    - name: Display downloaded files
+      run: ls -R
     - name: Publish distribution 📦 to Test PyPI
       # Specifying a GitHub environment is optional, but strongly encouraged
       if: ${{ github.ref != 'refs/heads/main' }}
