@@ -75,6 +75,8 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout main
+        pip install -e .
+        python -c "from onepassword.utils import bump_version; bump_version(version_type='patch')"
         git add .
         git commit -m "[actions skip] GitHub bumping the version"
         git push
