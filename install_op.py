@@ -105,7 +105,7 @@ class CliInstaller:  # pragma: no cover
         if op == "":
             return True, self.download_location
         else:
-            if op == cli_version:
+            if op >= cli_version:
                 return False, ""
             else:
                 existing_location = read_bash_return("which op")
