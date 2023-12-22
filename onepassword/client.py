@@ -258,7 +258,7 @@ class ServiceSignIn(SignIn):
         self.signin()
 
     def signin(self):
-        if SERVICE_ACCOUNT_TOKEN in os.environ.keys():
+        if os.environ['OP_SERVICE_ACCOUNT_TOKEN'] != "":
             print("Using service account, for supported commands see: "
                   "https://developer.1password.com/docs/service-accounts/use-with-1password-cli#supported-commands")
             self.account_details = yaml.safe_load(read_bash_return("op user get --me", single=False))
