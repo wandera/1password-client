@@ -11,6 +11,8 @@ from onepassword.utils import read_bash_return, domain_from_email, Encryption, B
     _spawn_signin
 from onepassword.exceptions import OnePasswordForgottenPassword
 
+SERVICE_ACCOUNT_TOKEN = "OP_SERVICE_ACCOUNT_TOKEN"
+
 
 class SignIn:
     """
@@ -32,7 +34,8 @@ class SignIn:
 
     @staticmethod
     def _input_account() -> str:
-        account = input("Please input your 1Password account name e.g. wandera from wandera.1password.com: ")
+        account = input("Please input your 1Password personal or business acount name e.g. company from "
+                        "company.1password.com: ")
         return account
 
     def _get_account_bash(self, bash_profile: BashProfile) -> str:
@@ -250,6 +253,22 @@ class AppSignIn(SignIn):
         self._update_bash_account(account, bash_profile)
 
 
+class ServiceSignIn(SignIn):
+    def __init__(self):
+        self.signin()
+
+    def signin(self):
+        if SERVICE_ACCOUNT_TOKEN in os.environ.keys():
+            print("Using service account, for supported commands see: "
+                  "https://developer.1password.com/docs/service-accounts/use-with-1password-cli#supported-commands")
+            self.account_details = yaml.safe_load(read_bash_return("op user get --me", single=False))
+            self.account = self.account_details["Name"]
+        else:
+            print("No service account found, please setup on the web version of 1Password for more information go here:"
+                  " https://developer.1password.com/docs/service-accounts/use-with-1password-cli")
+
+
+
 class OnePassword:
     """
     Class for integrating with a OnePassword password manager
@@ -260,14 +279,16 @@ class OnePassword:
     """
     def __init__(self, signin_method: str = "app", account: str | None = None, password: str | None = None) -> None:
         # pragma: no cover
-
-        if signin_method == "app":
-            self.signin_strategy = AppSignIn(account)
-        elif signin_method == "manual":
-            self.signin_strategy = ManualSignIn(account, password)
+        if SERVICE_ACCOUNT_TOKEN in os.environ.keys():
+            self.signin_strategy = ServiceSignIn()
         else:
-            raise ValueError("Unrecognised 'signin_method', options are: 'app' or 'manual'. "
-                             "See: https://developer.1password.com/docs/cli/verify")
+            if signin_method == "app":
+                self.signin_strategy = AppSignIn(account)
+            elif signin_method == "manual":
+                self.signin_strategy = ManualSignIn(account, password)
+            else:
+                raise ValueError("Unrecognised 'signin_method', options are: 'app' or 'manual'. "
+                                 "See: https://developer.1password.com/docs/cli/verify")
 
     def get_uuid(self, docname: str, vault: str = "Private") -> str:  # pragma: no cover
         """

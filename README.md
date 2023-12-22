@@ -18,15 +18,16 @@ The library is split into two parts: installation and client in which we are slo
 systems as possible the following table should ensure users understand what this library can and can't do at time of 
 install.
 
-|                 | MacOS | Linux | 
-|-----------------|-------|-------|
-| Fully supported | Y     | Y     | 
-| CLI install     | Y     | Y     | 
-| SSO login       | Y     | Y     | 
-| Login via App   | Y     | Y     | 
-| Biometrics auth | Y     | Y     | 
-| Password auth   | Y     | Y     | 
-| CLI client      | Y     | Y     | 
+|                  | MacOS | Linux | 
+|------------------|-------|-------|
+| Fully supported  | Y     | Y     | 
+| CLI install      | Y     | Y     | 
+| SSO login        | Y     | Y     | 
+| Login via App    | Y     | Y     | 
+| Biometrics auth  | Y     | Y     | 
+| Password auth    | Y     | Y     | 
+| CLI client       | Y     | Y     | 
+| Service account  | Y     | Y     |
 
 ## Installation
 ```bash
@@ -106,7 +107,29 @@ op.get_item(uuid="example", fields="username")
 op.get_item(uuid="example", fields=["username", "password"])
 
 ```
-## 
+### Service Accounts
+We also support authentication using Service accounts, however these are not interchangeable with other auth routes and 
+hence other accounts i.e. this token based authentication will take precedence over any other method. 
+If you wish to use multiple account types, for now you will need to design this workflow yourself
+by clearing out the OP_SERVICE_ACCOUNT_TOKEN using `unset OP_SERVICE_ACCOUNT_TOKEN` before re-authenticating with 
+your preferred account. 
+
+To use a service account make sure to fulfil the requirements here: 
+https://developer.1password.com/docs/service-accounts/use-with-1password-cli
+and note that not all of the CLI commands are supported at this time. 
+
+Also note that your service account will only have access to certain vaults. In particular it will not be able to see 
+the `Shared` or `Private` vaults in any account. In our client this means you must always use the `vault` option. 
+
+Once you have fulfilled all the requirements, namely `export OP_SERVICE_ACCOUNT_TOKEN=<your token>`, you can then use 
+our client with:
+
+```python
+from onepassword import OnePassword
+
+op = OnePassword()
+op.list_vaults()
+```
 
 ### Input formats
 To be sure what you are using is of the right format
