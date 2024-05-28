@@ -436,8 +436,11 @@ class OnePassword:
                 "op item get {} --format=json --fields label={}".format(uuid, ",label=".join(fields)),
                 single=False))
             item = {}
-            for i in item_list.items():
-                item[i["label"]] = i["value"]
+            if isinstance(item_list, dict):
+                item[fields[0]] = item_list["value"]
+            else:
+                for i in item_list:
+                    item[i["id"]] = i["value"]
         elif isinstance(fields, str):
             item = {
                 fields: read_bash_return(
