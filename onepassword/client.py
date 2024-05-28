@@ -432,11 +432,15 @@ class OnePassword:
         :return: Dictionary of the item with requested fields
         """
         if isinstance(fields, list):
-            items = read_bash_return(
-                "op item get {} --fields label={}".format(uuid, ",label=".join(fields)),
-                single=False
-            ).rstrip('\n')
-            item = dict(zip(fields, items.split(",")))
+            item_list = json.loads(read_bash_return(
+                "op item get {} --format=json --fields label={}".format(uuid, ",label=".join(fields)),
+                single=False))
+            item = {}
+            if isinstance(item_list, dict):
+                item[fields[0]] = item_list["value"]
+            else:
+                for i in item_list:
+                    item[i["id"]] = i["value"]
         elif isinstance(fields, str):
             item = {
                 fields: read_bash_return(
