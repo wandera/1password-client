@@ -111,6 +111,12 @@ class TestClient(unittest.TestCase):
         """
         pass
 
+    def test_get_item_otp(self):
+        """
+        Without user interaction will not be signed in and be unable to list anything
+        """
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

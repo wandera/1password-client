@@ -445,3 +445,13 @@ class OnePassword:
         else:
             item = json.loads(read_bash_return("op item get {} --format=json".format(uuid), single=False))
         return item
+
+    @staticmethod
+    def get_item_otp(uuid: str | bytes):
+        """
+        Helper function to get the item otp, you can find the UUID you need using list_items
+
+        :param uuid: Uuid of the item you wish to get, no vault needed
+        :return: the otp of the item, if it exists
+        """
+        return read_bash_return("op item get {} --otp".format(uuid), single=False).rstrip('\n')
