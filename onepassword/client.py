@@ -451,6 +451,21 @@ class OnePassword:
         return item
 
     @staticmethod
+    def read(secret_ref: str):
+        """
+        Helper function to read a secret based on its reference(ex: op://<vault>/<item>/<field>)
+        You can get this reference from the UI or by using this command:
+        op item get <item> --format json --fields <secret_field>
+
+        :param secret_ref: Reference to the secret you wish to read
+        :return: The secret in plain text
+        """
+        if not secret_ref or not isinstance(secret_ref, str):
+            raise ValueError("secret_ref must be a non-empty string")
+
+        return read_bash_return("op read '{}'".format(secret_ref))
+
+    @staticmethod
     def get_item_otp(uuid: str | bytes):
         """
         Helper function to get the item otp, you can find the UUID you need using list_items
