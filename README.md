@@ -131,6 +131,30 @@ op = OnePassword()
 op.list_vaults()
 ```
 
+### Secret References
+
+Secret references are direct keys to a field in an item. They are useful when trying to get only one field(ex. API Key or a password) from an item.
+
+You can fetch secret based on secret references with the following code:
+
+```python
+from onepassword import OnePassword
+
+op = OnePassword()
+op.read("op://<vault>/<item>/<field>")
+```
+
+You can get the secret reference in one of the supported ways explained here:
+https://developer.1password.com/docs/cli/secret-references/
+
+Or you can use this:
+```python
+from onepassword import OnePassword
+
+op = OnePassword()
+op.get_item("Item")["fields"][0]['reference']
+```
+
 ### Input formats
 To be sure what you are using is of the right format
 
@@ -165,6 +189,7 @@ This is the set of commands the current python SDK covers:
 - list: List objects and events
     - items
     - vaults
+- read: Get a secret based on a secret reference
 - signin: Sign in to a 1Password account
 - signout: Sign out of a 1Password account
 
