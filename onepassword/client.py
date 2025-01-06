@@ -422,18 +422,20 @@ class OnePassword:
         return items
 
     @staticmethod
-    def get_item(uuid: str | bytes, fields: str | bytes | list | None = None):
+    def get_item(uuid: str | bytes, fields: str | bytes | list | None = None, vault: str | bytes | None = None):
         """
         Helper function to get a certain field, you can find the UUID you need using list_items
 
         :param uuid: Uuid of the item you wish to get, no vault needed
         :param fields: To return only certain detail use either a specific field or list of them
             (Optional, default=None which means all fields returned)
+        :param vault: When using service account, a vault must be provided. A vault may be specified by name or ID.
         :return: Dictionary of the item with requested fields
         """
+        vault_flag = f"--vault {vault}" if vault else ""
         if isinstance(fields, list):
             item_list = json.loads(read_bash_return(
-                "op item get {} --format=json --fields label={}".format(uuid, ",label=".join(fields)),
+                "op item get {} --format=json --fields label={} {}".format(uuid, ",label=".join(fields), vault_flag),
                 single=False))
             item = {}
             if isinstance(item_list, dict):
@@ -444,10 +446,10 @@ class OnePassword:
         elif isinstance(fields, str):
             item = {
                 fields: read_bash_return(
-                    "op item get {} --fields label={}".format(uuid, fields), single=False).rstrip('\n')
+                    "op item get {} --fields label={} {}".format(uuid, fields, vault_flag), single=False).rstrip('\n')
             }
         else:
-            item = json.loads(read_bash_return("op item get {} --format=json".format(uuid), single=False))
+            item = json.loads(read_bash_return("op item get {} --format=json {}".format(uuid, vault_flag), single=False))
         return item
 
     @staticmethod
@@ -474,3 +476,4 @@ class OnePassword:
         :return: the otp of the item, if it exists
         """
         return read_bash_return("op item get {} --otp".format(uuid), single=False).rstrip('\n')
+
