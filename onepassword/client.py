@@ -422,17 +422,17 @@ class OnePassword:
         return items
 
     @staticmethod
-    def get_item(uuid: str | bytes, fields: str | bytes | list | None = None, vault_uuid: str | None = None):
+    def get_item(uuid: str | bytes, fields: str | bytes | list | None = None, vault: str | bytes | None = None):
         """
         Helper function to get a certain field, you can find the UUID you need using list_items
 
         :param uuid: Uuid of the item you wish to get, no vault needed
         :param fields: To return only certain detail use either a specific field or list of them
             (Optional, default=None which means all fields returned)
-        :param vault_uuid: When using service account, a vault_uuid must be provided
+        :param vault: When using service account, a vault must be provided. A vault may be specified by name or ID.
         :return: Dictionary of the item with requested fields
         """
-        vault_flag = f"--vault {vault_uuid}" if vault_uuid else ""
+        vault_flag = f"--vault {vault}" if vault else ""
         if isinstance(fields, list):
             item_list = json.loads(read_bash_return(
                 "op item get {} --format=json --fields label={} {}".format(uuid, ",label=".join(fields), vault_flag),

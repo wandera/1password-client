@@ -119,7 +119,14 @@ https://developer.1password.com/docs/service-accounts/use-with-1password-cli
 and note that not all of the CLI commands are supported at this time. 
 
 Also note that your service account will only have access to certain vaults. In particular it will not be able to see 
-the `Shared` or `Private` vaults in any account. In our client this means you must always use the `vault` option. 
+the `Shared` or `Private` vaults in any account. In our client this means you must always use the `vault` option, e.g. like so:
+
+```python
+from onepassword import OnePassword
+
+op = OnePassword()
+op.get_item(uuid="example_item", vault="example_vault")
+```
 
 Once you have fulfilled all the requirements, namely `export OP_SERVICE_ACCOUNT_TOKEN=<your token>`, you can then use 
 our client with:
