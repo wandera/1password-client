@@ -3,9 +3,13 @@ name: PyPi build and release
 on: [push, workflow_dispatch]
 
 jobs:
-  build:
-    name: PyPi build
+  pypi-build-publish:
+    name: PyPi build and release
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+      contents: write
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -45,16 +49,8 @@ jobs:
       with:
         name: source-code
         path: dist/
-  pypi-publish:
-    name: Pypi release
-    runs-on: ubuntu-latest
-    permissions:
-        # IMPORTANT: this permission is mandatory for trusted publishing
-        id-token: write
-        contents: write
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/download-artifact@v4
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
       with:
         name: source-code
         path: dist
