@@ -45,10 +45,10 @@ jobs:
         --outdir dist/
         .
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: source-code
-        path: dist/
+        path: dist
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
