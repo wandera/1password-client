@@ -277,6 +277,8 @@ class OnePassword:
     :param account: 1Password account name (Optional, default=None)
     :param password: password of 1Password account (Optional, default=None)
     """
+    cli_version = tuple(map(int, read_bash_return("op --version").split(".")))
+
     def __init__(self, signin_method: str = "app", account: str | None = None, password: str | None = None) -> None:
         # pragma: no cover
         if SERVICE_ACCOUNT_TOKEN in os.environ.keys():
@@ -421,8 +423,8 @@ class OnePassword:
         items = json.loads(read_bash_return("op items list --vault='{}' --format=json".format(vault), single=False))
         return items
 
-    @staticmethod
-    def get_item(uuid: str | bytes, fields: str | bytes | list | None = None):
+    @classmethod
+    def get_item(cls, uuid: str | bytes, fields: str | bytes | list | None = None):
         """
         Helper function to get a certain field, you can find the UUID you need using list_items
 
@@ -431,9 +433,10 @@ class OnePassword:
             (Optional, default=None which means all fields returned)
         :return: Dictionary of the item with requested fields
         """
+        reveal = "--reveal" if cls.cli_version >= (2, 30, 0) else ""
         if isinstance(fields, list):
             item_list = json.loads(read_bash_return(
-                "op item get {} --format=json --fields label={}".format(uuid, ",label=".join(fields)),
+                "op item get {} {} --format=json --fields label={}".format(uuid, reveal, ",label=".join(fields)),
                 single=False))
             item = {}
             if isinstance(item_list, dict):
@@ -444,10 +447,10 @@ class OnePassword:
         elif isinstance(fields, str):
             item = {
                 fields: read_bash_return(
-                    "op item get {} --fields label={}".format(uuid, fields), single=False).rstrip('\n')
+                    "op item get {} {} --fields label={}".format(uuid, reveal, fields), single=False).rstrip('\n')
             }
         else:
-            item = json.loads(read_bash_return("op item get {} --format=json".format(uuid), single=False))
+            item = json.loads(read_bash_return("op item get {} {} --format=json".format(uuid, reveal), single=False))
         return item
 
     @staticmethod
